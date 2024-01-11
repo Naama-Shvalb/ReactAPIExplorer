@@ -1,0 +1,48 @@
+.signUpLogin-container{
+    margin: 0 auto; 
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px 5px green;
+    font-family: 'Comic Sans MS';
+    width:500px;
+
+}
+
+
+.signUpLogin-container > button{
+    margin-bottom: 15px;
+    margin-right: 10px;
+    margin-left: 10px;
+    width: 20%;
+
+}
+
+.loginBtn{
+    background-color: rgb(38, 100, 177) !important;
+
+}
+
+.signUpBtn{
+    background-color: rgb(215, 142, 68) !important;
+
+}
+
+.enterToGameBtn{
+    width: 20% !important;
+    background-color: rgb(23, 86, 41)!important;
+    margin-bottom: 30px !important;
+
+
+}
+
+.signUpLogin-container > input{
+    margin: 0 auto; 
+    display: block;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    width: 250px;
+    height: 30px;
+    font-size: large;
+   
+
+}

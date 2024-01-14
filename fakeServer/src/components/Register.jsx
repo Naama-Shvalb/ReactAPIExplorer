@@ -3,19 +3,28 @@ import Login  from './Login'
 import { User } from '../User';
 import './SignUpLogin.css';
 
-const SingUp = () => {
+const Register = () => {
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loggedInUser, setLoggedInUser] = useState(false);
     const [ToLogin, setToLogin] = useState(false);
 
-    const handleSignup = () => {
-        const storedUser = JSON.parse(localStorage.getItem('storedUser')) || [];
-        if(storedUser.find(Element=>(Element.email === email))){
+    const handleRegister = () => {
+
+        const user = fetch(`http://localhost:3000/users?username=${username}`)
+          .then(response => response.json())
+          .then(json => console.log(json))
+
+        if(user){
           alert('you are an existing user please log in');
-          setEmail('');
+          setPassword('');
         }
-        const newUser = new User(username, email);
+        // const storedUser = JSON.parse(localStorage.getItem('storedUser')) || []
+        // if(storedUser.find(Element=>(Element.email === email))){
+        //   alert('you are an existing user please log in');
+        //   setEmail('');
+        // }
+        const newUser = new User(username, password);
         storedUser.push(newUser);
         storedUser.sort((a, b) => a.averageScore - b.averageScore);
         localStorage.setItem('storedUser', JSON.stringify(storedUser));
@@ -26,9 +35,9 @@ const SingUp = () => {
 
     const loginUser = () => {
       const storedUser = JSON.parse(localStorage.getItem('storedUser')) || [];
-      const user = storedUser.find(Element=>(Element.email === email));
+      const user = storedUser.find(Element=>(Element.email === password));
       if(user){
-        if(playerCollection.getPlayer(email)){
+        if(playerCollection.getPlayer(password)){
           alert("You are already in the game");
         } else {
           const myPlayer = new CurrentPlayer(user.name, user.email, user.maxScore);
@@ -37,7 +46,7 @@ const SingUp = () => {
       } else {
         alert('you are not an existing user please insert another user or sign up');
       }
-      setEmail("");
+      setPassword("");
     };
 
     const handleLogin = () => {
@@ -71,10 +80,10 @@ const SingUp = () => {
               <input
                 type="email"
                 placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <button className='signUpBtn' onClick={handleSignup}>Signup</button>
+              <button className='signUpBtn' onClick={handleRegister}>Signup</button>
               <button className='loginBtn' onClick={handleLogin}>login</button>
               <br />
               <button className='enterToGameBtn'onClick={handStartGame}>enter to game</button>
@@ -85,4 +94,4 @@ const SingUp = () => {
       );
 }
 
-export default SingUp
+export default Register

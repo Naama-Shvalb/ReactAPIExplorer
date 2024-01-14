@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Login  from './Login'
-import Register from './Register';
-import { User } from '../User';
+/* eslint-disable react/prop-types */
+import React, { useState} from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { User , Address, Company, Geo} from '../User';
 import './SignUpLogin.css';
 
 const FinishRegister = ({userName, password})=>{
@@ -20,10 +20,14 @@ const FinishRegister = ({userName, password})=>{
     const [bs, setBs] = useState('');
     const [isLoggedInUser, setisLoggedInUser] = useState(false);
 
+    const navigate = useNavigate();
     
-    const HandleFinishRegister = ()=>{
-        const adress = {street, suite, city, zipcode};
-        const newUser = new User(findUserId(), name, userName, email, adress, phone, password, company);
+    const handleFinisRegister = (userId)=> {
+        const geo = new Geo(lat, lng);
+        const adress = new Address(street, suite, city, zipcode, geo);
+        const company = new Company(companyName, catchPhrase, bs);
+        const newUser = new User(userId, name, userName, email, adress, phone, password, company);
+        console.log(newUser)
 
         fetch('http://localhost:3000/users', {
           method: 'POST',
@@ -34,16 +38,15 @@ const FinishRegister = ({userName, password})=>{
           .catch(error => console.error('Error:', error));
         
         loginUser(newUser);
-
-
     }
 
-    const findUserId = () => {
-        const usersArr = fetch('http://localhost:3000/users')
-            .then(response => response.json())
-
-        const id = usersArr[length].id + 1;
-        return id;
+    function registerWrapper() {
+        fetch('http://localhost:3000/users')
+        .then(response => response.json())
+        .then(data => {
+            const userId = data[data.length-1].id + 1;
+            handleFinisRegister(userId);
+        });
     }
 
     const loginUser = (user) => {
@@ -57,10 +60,7 @@ const FinishRegister = ({userName, password})=>{
     return(
         <>
          <div>
-          {isLoggedInUser ? (
-            <Home>
-            </Home>
-          ) : (
+          <Navigate to={isLoggedInUser? "/home": "/finishRegister"}/>
             <div className='signUpLogin-container'> 
               <h2>Sign up</h2>
               <input
@@ -75,7 +75,7 @@ const FinishRegister = ({userName, password})=>{
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <lable>address:</lable>
+              <p>address:</p>
                     <input
                     type="text"
                     placeholder="Street"
@@ -100,7 +100,7 @@ const FinishRegister = ({userName, password})=>{
                     value={zipcode}
                     onChange={(e) => setZipcode(e.target.value)}
                     />
-                    <label>Geo</label>
+                    <p>Geo</p>
                         <input
                         type="number"
                         placeholder="lat"
@@ -119,7 +119,7 @@ const FinishRegister = ({userName, password})=>{
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
-              <label>company</label>
+              <p>company</p>
                 <input
                     type="text"
                     placeholder="name"
@@ -137,11 +137,11 @@ const FinishRegister = ({userName, password})=>{
                     onChange={(e) => setBs(e.target.value)}
                 />
             
-              <button className='signUpBtn' onClick={HandleFinishRegister}>Signup</button>
+              <button className='signUpBtn' onClick={registerWrapper}>Signup</button>
               <br />
 
             </div>
-          )}
+          
         </div>
         </>
     )

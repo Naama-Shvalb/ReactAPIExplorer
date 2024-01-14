@@ -7,54 +7,63 @@ export class User {
     phone: number;
     website: number;
     company: Company;
-
-    constructor(data: any) {
-    this.id = data.id;
-    this.name = data.name;
-    this.username = data.username;
-    this.email = data.email;
-    this.address = new Address(data.address);
-    this.phone = data.phone;
-    this.website = data.website;
-    this.company = new Company(data.company);
+  
+    constructor(
+      id: number,
+      name: string,
+      username: string,
+      email: string,
+      address: Address,
+      phone: number,
+      website: number,
+      company: Company
+    ) {
+      this.id = id;
+      this.name = name;
+      this.username = username;
+      this.email = email;
+      this.address = address;
+      this.phone = phone;
+      this.website = website;
+      this.company = company;
     }
   }
   
-  class Address {
+  export class Address {
     street: string;
     suite: string;
     city: string;
     zipcode: number;
     geo: Geo;
   
-    constructor(data: any) {
-      this.street = data.street;
-      this.suite = data.suite;
-      this.city = data.city;
-      this.zipcode = data.zipcode;
-      this.geo = new Geo(data.geo);
+    constructor(street: string, suite: string, city: string, zipcode: number, geo: Geo) {
+      this.street = street;
+      this.suite = suite;
+      this.city = city;
+      this.zipcode = zipcode;
+      this.geo = geo;
     }
   }
   
-  class Geo {
+  export class Geo {
     lat: number;
     lng: number;
   
-    constructor(data: any) {
-      this.lat = data.lat;
-      this.lng = data.lng;
+    constructor(lat: number, lng: number) {
+      this.lat = lat;
+      this.lng = lng;
     }
   }
   
-  class Company {
+  export class Company {
     name: string;
     catchPhrase: string;
     bs: string;
   
-    constructor(data: any) {
-      this.name = data.name;
-      this.catchPhrase = data.catchPhrase;
-      this.bs = data.bs;
+    constructor(name: string, catchPhrase: string, bs: string) {
+      this.name = name;
+      this.catchPhrase = catchPhrase;
+      this.bs = bs;
     }
   }
   

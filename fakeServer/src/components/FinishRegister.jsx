@@ -44,7 +44,7 @@ const FinishRegister = ({userName, password})=>{
         fetch('http://localhost:3000/users')
         .then(response => response.json())
         .then(data => {
-            const userId = data[data.length-1].id + 1;
+            const userId = parseInt(data[data.length-1].id) + 1;
             handleFinisRegister(userId);
         });
     }

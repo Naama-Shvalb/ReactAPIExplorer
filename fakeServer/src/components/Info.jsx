@@ -1,25 +1,28 @@
 
 const Info = () => {
-    let currentUser = JSON.parse(localStorage.getItem("storedUser"));
+    const users = JSON.parse(localStorage.getItem("storedUsers"));
+    const currentUser = users[users.length-1];    
     return (
         <>
-            <p>name: {currentUser[0].name}<br />
-                email: {currentUser[0].email}<br />
-                username: {currentUser[0].username}<br />
+        <h1>Info</h1>
+            <p>
+                name: {currentUser.name}<br />
+                email: {currentUser.email}<br />
+                username: {currentUser.username}<br />
                 address: <br />
-                street: {currentUser[0].address.street}<br />
-                suite: {currentUser[0].address.suite}<br />
-                city: {currentUser[0].address.city}<br />
-                zipcode: {currentUser[0].address.zipcode}<br />
+                street: {currentUser.address.street}<br />
+                suite: {currentUser.address.suite}<br />
+                city: {currentUser.address.city}<br />
+                zipcode: {currentUser.address.zipcode}<br />
                 geo: <br />
-                lat: {currentUser[0].address.geo.lat}<br />
-                lng: {currentUser[0].address.geo.lng}<br />
-                phone: {currentUser[0].phone}<br />
-                website: {currentUser[0].website}<br />
+                lat: {currentUser.address.geo.lat}<br />
+                lng: {currentUser.address.geo.lng}<br />
+                phone: {currentUser.phone}<br />
+                website: {currentUser.website}<br />
                 company: <br />
-                name: {currentUser[0].company.name}<br />
-                catchPhrase: {currentUser[0].company.catchPhrase}<br />
-                bs: {currentUser[0].company.bs}<br />
+                name: {currentUser.company.name}<br />
+                catchPhrase: {currentUser.company.catchPhrase}<br />
+                bs: {currentUser.company.bs}<br />
             </p>
         </>
     )

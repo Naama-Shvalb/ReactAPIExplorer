@@ -13,7 +13,7 @@ const Home = () => {
 
 
     const handleInfoBtn = () => {
-        navigate('/home/info');
+        navigate('info');
     }
 
     const handleLogOut = () => {
@@ -24,7 +24,11 @@ const Home = () => {
     }
 
     const handleTodosBtn = () => {
-        navigate('/home/todos');
+        navigate('todos');
+    }
+
+    const handlePostsBtn = ()=>{
+        navigate('posts');
     }
 
     return(
@@ -32,7 +36,7 @@ const Home = () => {
             <h1>Hi {currentUser.name}</h1>
             <button onClick={handleLogOut}>Logout</button>
             <button>Albums</button>
-            <button>Posts</button>
+            <button onClick={handlePostsBtn}>Posts</button>
             <button onClick={handleTodosBtn}>Todos</button>
             <button onClick={handleInfoBtn}>Info</button>
             <Outlet />

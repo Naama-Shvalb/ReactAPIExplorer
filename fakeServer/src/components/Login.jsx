@@ -28,7 +28,7 @@ const Login = () => {
   const localstorageAndLogin = () => {
     if (user != '' && password == user[0].website) {
       const storedUsers = JSON.parse(localStorage.getItem('storedUsers')) || [];
-      // storedUsers.push(user);
+      storedUsers.push(user);
       localStorage.setItem('storedUsers', JSON.stringify(user));
       setLoggedInUser(true);
     }
@@ -46,7 +46,7 @@ const Login = () => {
 
   return (
     <div>
-      <Navigate to={isLoggedInUser? "/home": toRegister? "/register": "/login"}/>
+      <Navigate to={isLoggedInUser? `/home`: toRegister? "/register": "/login"}/>
         <div className='signUpLogin-container'>
           <h2>insert user</h2>
           <input

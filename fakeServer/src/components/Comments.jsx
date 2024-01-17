@@ -52,21 +52,21 @@ const Comments = (props) => {
         setName(commentToUpdate.name);
     }
 
-    const updateCommentFunc = (commentPostId, UpdateComment) => {
+    const updateCommentFunc = (updateCommentObj) => {
+        const updatedComment = { "postId": updateCommentObj.postId, "id": updateCommentObj.id, "name": updateCommentObj.name, "email": updateCommentObj.email, "body": body };
+        
         // fetch update comment 
-
-        fetch(`http://localhost:3000/comments/${UpdateComment.id}`, {
+        fetch(`http://localhost:3000/comments/${updateCommentObj.id}`, {
             method: "PUT",
-            body: JSON.stringify(updateComment),
+            body: JSON.stringify(updatedComment),
           })
             .then(response => response.json())
+            .catch(error => console.error('Error:', error));
 
-        const updatedComment = { "postId": commentPostId, "id": UpdateCommentId, "name": name, "email": currentUser.email, "body": body }
         setComments(prevComments => prevComments.map((comment) => {
-            return comment.id == UpdateCommentId ? updatedComment : comment;
+            return comment.id == updateCommentObj.id ? updatedComment : comment;
         }));
         setBody('');
-        setName('');
         let copyUpdate = [];
         comments.map((comment) => { copyUpdate[comment.id] = false; });
         setUpdateComment(copyUpdate);
@@ -103,7 +103,7 @@ const Comments = (props) => {
                                         value={body}
                                         onChange={(e) => setBody(e.target.value)}
                                     />
-                                    <button onClick={() => { updateCommentFunc(post.id, comment) }}>update</button>
+                                    <button onClick={() => { updateCommentFunc(comment) }}>update</button>
                                     <button onClick={() => { cancel() }}>cancel</button>
                                 </>
                                     : <button onClick={() => sendToUpdateComment(comment)}>update comment</button>

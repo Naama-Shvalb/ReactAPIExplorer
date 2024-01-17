@@ -11,11 +11,6 @@ const Home = () => {
     const currentUser = users[users.length-1];
     const navigate = useNavigate();
 
-
-    const handleInfoBtn = () => {
-        navigate('info');
-    }
-
     const handleLogOut = () => {
         users.pop();
         localStorage.setItem('storedUsers', JSON.stringify(users));
@@ -23,22 +18,30 @@ const Home = () => {
 
     }
 
-    const handleTodosBtn = () => {
-        navigate('todos');
-    }
+    // const handleInfoBtn = () => {
+    //     navigate('info');
+    // }
 
-    const handlePostsBtn = ()=>{
-        navigate('posts');
+    // const handleTodosBtn = () => {
+    //     navigate('todos');
+    // }
+
+    // const handlePostsBtn = ()=>{
+    //     navigate('posts');
+    // }
+
+    const handelNavBtn = (target) => {
+        navigate(`${target}`);
     }
 
     return(
         <>
             <h1>Hi {currentUser.name}</h1>
             <button onClick={handleLogOut}>Logout</button>
-            <button>Albums</button>
-            <button onClick={handlePostsBtn}>Posts</button>
-            <button onClick={handleTodosBtn}>Todos</button>
-            <button onClick={handleInfoBtn}>Info</button>
+            <button onClick={()=>handelNavBtn("albums")}>Albums</button>
+            <button onClick={()=>handelNavBtn("posts")}>Posts</button>
+            <button onClick={()=>handelNavBtn("todos")}>Todos</button>
+            <button onClick={()=>handelNavBtn("info")}>Info</button>
             <Outlet />
         </>
     )

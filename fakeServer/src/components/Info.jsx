@@ -18,7 +18,6 @@ const Info = () => {
                 lat: {currentUser.address.geo.lat}<br />
                 lng: {currentUser.address.geo.lng}<br />
                 phone: {currentUser.phone}<br />
-                website: {currentUser.website}<br />
                 company: <br />
                 name: {currentUser.company.name}<br />
                 catchPhrase: {currentUser.company.catchPhrase}<br />

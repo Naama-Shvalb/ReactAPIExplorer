@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-
-
 const Comments = (props) => {
     const { post, currentUser } = props;
     const [comments, setComments] = useState();
@@ -11,24 +9,24 @@ const Comments = (props) => {
     const [name, setName] = useState('');
 
     useEffect(() => {
-        if (comments == undefined)
             fetch(`http://localhost:3000/comments?postId=${post.id}`)
                 .then(response => response.json())
                 .then(json => setComments(json));
-    })
+    }, [])
 
     const addNewComment = (postId) => {
-        //fetch add comment
+        const ID = (comments == undefined || comments == '') ? 1 : parseInt(comments[comments.length - 1].id) + 1;
+        const addedComment = { "postId": postId, "id": ID, "name": name, "email": currentUser.email, "body": body };
 
-        const ID = (comments == undefined || comments == '') ? 1
-            : parseInt(comments[comments.length - 1].id) + 1;
-        setComments(prevComments => [...prevComments, {
-            "postId": postId,
-            "id": ID,
-            "name": name,
-            "email": currentUser.email,
-            "body": body
-        }])
+        //fetch add comment
+        fetch('http://localhost:3000/comments', {
+            method: 'POST',
+            body: JSON.stringify(addedComment),
+          })
+            .then(response => response.json())
+            .catch(error => console.error('Error:', error));
+
+        setComments(prevComments => [...prevComments, addedComment]);
         setBody('');
         setName('');
         setAddComment(false);
@@ -36,6 +34,10 @@ const Comments = (props) => {
 
     const deleteComment = (deleteCommentId) => {
         // fetch delete comment
+        fetch(`http://localhost:3000/comments/${deleteCommentId}`, {
+            method: "DELETE",
+          })
+            .then(response => response.json())
 
         setComments(prevComments => prevComments.filter(comment => { return comment.id !== deleteCommentId; }));
     }
@@ -50,8 +52,14 @@ const Comments = (props) => {
         setName(commentToUpdate.name);
     }
 
-    const updateCommentFunc = (commentPostId, UpdateCommentId) => {
+    const updateCommentFunc = (commentPostId, UpdateComment) => {
         // fetch update comment 
+
+        fetch(`http://localhost:3000/comments/${UpdateComment.id}`, {
+            method: "PUT",
+            body: JSON.stringify(updateComment),
+          })
+            .then(response => response.json())
 
         const updatedComment = { "postId": commentPostId, "id": UpdateCommentId, "name": name, "email": currentUser.email, "body": body }
         setComments(prevComments => prevComments.map((comment) => {
@@ -70,6 +78,10 @@ const Comments = (props) => {
         setName('');
         setUpdateComment(false);
     }
+
+    // https://dev.to/collegewap/react-fetch-example-getpostputdelete-with-api-3l00
+
+    
     if (comments == undefined)
         return (
             <></>
@@ -91,7 +103,7 @@ const Comments = (props) => {
                                         value={body}
                                         onChange={(e) => setBody(e.target.value)}
                                     />
-                                    <button onClick={() => { updateCommentFunc(post.id, comment.id) }}>update</button>
+                                    <button onClick={() => { updateCommentFunc(post.id, comment) }}>update</button>
                                     <button onClick={() => { cancel() }}>cancel</button>
                                 </>
                                     : <button onClick={() => sendToUpdateComment(comment)}>update comment</button>

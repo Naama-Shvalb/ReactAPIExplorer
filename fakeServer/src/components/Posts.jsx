@@ -40,15 +40,18 @@ const Posts = () => {
   }
 
   const addNewPost = () => {
-    //fetch- add post
-
     const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
-    setPosts(prevPosts => [...prevPosts, {
-      "userId": currentUser.id,
-      "id": ID,
-      "title": title,
-      "body": body
-    }])
+    const addedPost = { "id": ID, "userId": currentUser.id, "title": title, "body": body };
+    
+    //fetch- add post
+    fetch('http://localhost:3000/posts', {
+      method: 'POST',
+      body: JSON.stringify(addedPost),
+    })
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error));
+
+    setPosts(prevPosts => [...prevPosts, addedPost])
     setBody('');
     setTitle('');
     setAddPost(false);

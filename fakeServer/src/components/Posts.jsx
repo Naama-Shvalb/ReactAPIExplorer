@@ -16,12 +16,10 @@ const Posts = () => {
   const currentUser = storedUsers[storedUsers.length - 1];
 
   useEffect(() => {
-    if (posts == undefined) {
       fetch(`http://localhost:3000/posts?userId=${currentUser.id}`)
         .then(response => response.json())
         .then(json => setPosts(json));
-    }
-  });
+  }, []);
 
 
   const getMoreDetails = (showPostId) => {

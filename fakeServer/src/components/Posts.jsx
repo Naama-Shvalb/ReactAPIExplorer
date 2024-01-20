@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import Comments from './Comments';
-import './posts.css'
+import './posts.css';
 
 const Posts = () => {
 
@@ -12,8 +13,7 @@ const Posts = () => {
   const [updatePost, setUpdatePost] = useState(false);
   const [displayComments, SetDisplayComments] = useState(false);
 
-  const storedUsers = JSON.parse(localStorage.getItem("storedUsers"));
-  const currentUser = storedUsers[storedUsers.length - 1];
+  const currentUser = JSON.parse(localStorage.getItem("activeUser"));
 
   useEffect(() => {
       fetch(`http://localhost:3000/posts?userId=${currentUser.id}`)
@@ -29,13 +29,13 @@ const Posts = () => {
       showPostId == post.id ? copyDetail[post.id] = true : copyDetail[post.id] = false;
     });
     setDetail(copyDetail);
-  }
+  };
 
   const deletePost = (deletePostId) => {
     //fetch- delete post
 
     setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
-  }
+  };
 
   const addNewPost = () => {
     const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
@@ -49,11 +49,11 @@ const Posts = () => {
       .then(response => response.json())
       .catch(error => console.error('Error:', error));
 
-    setPosts(prevPosts => [...prevPosts, addedPost])
+    setPosts(prevPosts => [...prevPosts, addedPost]);
     setBody('');
     setTitle('');
     setAddPost(false);
-  }
+  };
 
   const sendToUpdatePost = (postToUpdate) => {
     let copyUpdate = [];
@@ -64,12 +64,12 @@ const Posts = () => {
     setUpdatePost(copyUpdate);
     setTitle(postToUpdate.title);
     // setBody(postToUpdate.body);
-  }
+  };
 
   const postUpdate = (postToUpdateId) => {
     // fetch- upddate post
 
-    const updatedPost = { "uesrId": currentUser.id, "id": postToUpdateId, "title": title, "body": body }
+    const updatedPost = { "uesrId": currentUser.id, "id": postToUpdateId, "title": title, "body": body };
     setPosts(prevPosts => prevPosts.map((post) => {
       return post.id == postToUpdateId ? updatedPost : post;
     }));
@@ -78,14 +78,14 @@ const Posts = () => {
     let copyUpdate = [];
     posts.map((post) => { copyUpdate[post.id] = false; });
     setUpdatePost(copyUpdate);
-  }
+  };
 
   const cancel = () => {
     setAddPost(false);
     setUpdatePost(false);
     setTitle('');
     setBody('');
-  }
+  };
 
   if (posts == undefined) {
     return <></>;
@@ -116,7 +116,7 @@ const Posts = () => {
                       onChange={(e) => setBody(e.target.value)}
                     />
                     <button onClick={() => postUpdate(post.id)}>update</button>
-                    <button onClick={() => { cancel() }}>cancel</button><br/>
+                    <button onClick={() => { cancel(); }}>cancel</button><br/>
                   </>
                   : <button onClick={() => sendToUpdatePost(post)}>update post</button>
                 }
@@ -129,7 +129,7 @@ const Posts = () => {
               </>
               : <button onClick={() => getMoreDetails(post.id)}>more details</button>}
           </div>
-        )
+        );
       })}
       {addPost ? <>
         <input
@@ -145,12 +145,12 @@ const Posts = () => {
           onChange={(e) => setBody(e.target.value)}
         />
         <button onClick={addNewPost}>add</button>
-        <button onClick={() => { cancel() }}>cancel</button>
+        <button onClick={() => { cancel(); }}>cancel</button>
       </>
         : <button onClick={() => setAddPost(true)}>add post</button>
       }
 
     </>
-  )
-}
+  );
+};
 export default Posts;

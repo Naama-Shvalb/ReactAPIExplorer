@@ -4,8 +4,8 @@ const Albums = () => {
     const [albums, setAlbums]= useState('');
     const [displayPhotos, setDisplayPhotos]=useState(false);
 
-    const storedUsers = JSON.parse(localStorage.getItem("storedUsers"));
-    const currentUser = storedUsers[storedUsers.length - 1];
+    const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+
 
     useEffect(()=>{
         fetch(`http://localhost:3000/albums?userId=${currentUser.id}`)

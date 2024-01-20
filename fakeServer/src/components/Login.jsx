@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, json, useNavigate } from 'react-router-dom';
 import './SignUpLogin.css';
 import Register from './Register';
-import Home from './Home'
+import Home from './Home';
+
 
 const Login = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState('');
-  const [isLoggedInUser, setLoggedInUser] = useState(false);
+  const [isLoggedInUser, setIsLoggedInUser] = useState(false);
   const [toRegister, setToRegister] = useState(false);
+
+  console.log('user:', user);
+  console.log('user id:',  user.id);
 
   const handleLogin = () => {
     if (name == '') {
-      alert("Enter name and password")
+      alert("Enter name and password");
       return;
     }
     fetch(`http://localhost:3000/users?username=${name}`)
       .then(response => response.json())
-      .then(json => setUser(json));
+      .then(jsonUser => {
+        setUser(jsonUser[0]);
+      });
   };
 
   useEffect(() => {
@@ -26,27 +32,25 @@ const Login = () => {
   }, [user]);
   
   const localstorageAndLogin = () => {
-    if (user != '' && password == user[0].website) {
-      const storedUsers = JSON.parse(localStorage.getItem('storedUsers')) || [];
-      storedUsers.push(user);
-      localStorage.setItem('storedUsers', JSON.stringify(user));
-      setLoggedInUser(true);
+    if (user != '' && password == user.website) {
+      localStorage.setItem('activeUser', JSON.stringify(user));
+      setIsLoggedInUser(true);
     }
     else if (name != '') {
       alert('try again or register');
     }
     setName('');
-    setUser('');
+    //setUser('');
     setPassword('');
-  }
+  };
   
   const goToRegister = () => {
     setToRegister(true);
-  }
+  };
 
   return (
     <div>
-      <Navigate to={isLoggedInUser? `/home`: toRegister? "/register": "/login"}/>
+      <Navigate to={isLoggedInUser? `/users/${user.id}/home`: toRegister? "/register": "/login"}/>
         <div className='signUpLogin-container'>
           <h2>insert user</h2>
           <input
@@ -65,7 +69,7 @@ const Login = () => {
           <button className='signUpBtn' onClick={goToRegister}>Register</button>
         </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -1,4 +1,5 @@
-import React, { useState} from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect} from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import './SignUpLogin.css';
@@ -11,27 +12,43 @@ const Register = () => {
     const navigate = useNavigate();
   
     const handleRegister = () => {
+      fetch(`http://localhost:3000/users?username=${username}`)
+        .then(response => response.json())
+        .then(user => {
+          console.log(user); // Log the user data for debugging
+    
+          if (user.length > 0) {
+            alert('You are an existing user. Please log in.');
+            setPassword('');
+          } else {
+            // User is not found, navigate to finishRegister
+            setIsRegistered(true);
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    };
 
-        const user = fetch(`http://localhost:3000/users?username=${username}`)
-          .then(response => response.json())
-          .then(json => console.log(json))
-          .then(json => console.log(json))
-
-        if(user.legth > 0){
-          alert('you are an existing user please log in');
-          setPassword('');
-        }
-      
-        setIsRegistered(true);
-
-      };
+    useEffect(() => {
 
       const navigateToFinishRegister = () => {
+        console.log("username and pass from register", username, password);
         // Navigate to the '/finish-register' route with props in the URL
         navigate('/finishRegister', {
-          state: { username, password }
+          state: { userName: username, password: password }
         });
       };
+      if (isRegistered) {
+        navigateToFinishRegister();
+      }
+    }, [isRegistered, navigate, username, password]);
+
+
+      // const navigateToFinishRegister = () => {
+      //   // Navigate to the '/finish-register' route with props in the URL
+      //   navigate('/finishRegister', {
+      //     state: { username, password }
+      //   });
+      // };
 
       const handleLoginClick = () => {
         // Navigate to the '/login' route
@@ -40,29 +57,26 @@ const Register = () => {
 
       return (
         <div>
-          {isRegistered ? (
-            navigateToFinishRegister()
-          ) : (
-            <div className='signUpLogin-container'> 
-              <h2>Register</h2>
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button className='signUpBtn' onClick={handleRegister}>Register</button>
-              <button className='loginBtn' onClick= {handleLoginClick}>login</button>
-          </div>
-          )}
+          <div className='signUpLogin-container'> 
+            <h2>Register</h2>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button className='signUpBtn' onClick={handleRegister}>Register</button>
+            <button className='loginBtn' onClick= {handleLoginClick}>login</button>
+        </div>
+
         </div>
       );
-}
+};
 
-export default Register
+export default Register;

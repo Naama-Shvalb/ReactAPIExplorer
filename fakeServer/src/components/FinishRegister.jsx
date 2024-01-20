@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 import React, { useState} from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { User , Address, Company, Geo} from '../User';
 import './SignUpLogin.css';
 
 const FinishRegister = ({userName, password})=>{
 
+    const [userId, setUserId] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [street, setStreet] = useState('');
@@ -22,13 +24,15 @@ const FinishRegister = ({userName, password})=>{
 
     const navigate = useNavigate();
     
-    const handleFinisRegister = (userId)=> {
+    const handleFinisRegister = ()=> {
+
         const geo = new Geo(lat, lng);
         const adress = new Address(street, suite, city, zipcode, geo);
         const company = new Company(companyName, catchPhrase, bs);
         const newUser = new User(userId, name, userName, email, adress, phone, password, company);
-        console.log(newUser)
+        console.log("new user", newUser);
 
+        
         fetch('http://localhost:3000/users', {
           method: 'POST',
           body: JSON.stringify(newUser),
@@ -38,21 +42,20 @@ const FinishRegister = ({userName, password})=>{
           .catch(error => console.error('Error:', error));
         
         loginUser(newUser);
-    }
+    };
 
     function registerWrapper() {
         fetch('http://localhost:3000/users')
         .then(response => response.json())
         .then(data => {
             const userId = parseInt(data[data.length-1].id) + 1;
-            handleFinisRegister(userId);
+            setUserId(userId);
         });
+        handleFinisRegister();
     }
 
     const loginUser = (user) => {
-      const storedUsers = JSON.parse(localStorage.getItem('storedUser')) || [];
-      storedUsers.push(user);
-      localStorage.setItem('storedUsers', JSON.stringify(storedUsers));
+      localStorage.setItem('activeUser', JSON.stringify(user));
       setisLoggedInUser(true);
     };
 
@@ -60,7 +63,7 @@ const FinishRegister = ({userName, password})=>{
     return(
         <>
          <div>
-          <Navigate to={isLoggedInUser? "/home": "/finishRegister"}/>
+          <Navigate to={isLoggedInUser? `/users/${userId}/home`: "/finishRegister"}/>
             <div className='signUpLogin-container'> 
               <h2>Sign up</h2>
               <input
@@ -144,7 +147,7 @@ const FinishRegister = ({userName, password})=>{
           
         </div>
         </>
-    )
-}
+    );
+};
 
-export default FinishRegister
+export default FinishRegister;

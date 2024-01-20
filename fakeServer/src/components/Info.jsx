@@ -1,7 +1,6 @@
 
 const Info = () => {
-    const users = JSON.parse(localStorage.getItem("storedUsers"));
-    const currentUser = users[users.length-1];    
+      const currentUser = JSON.parse(localStorage.getItem("activeUser"));   
     return (
         <>
         <h1>Info</h1>
@@ -24,6 +23,6 @@ const Info = () => {
                 bs: {currentUser.company.bs}<br />
             </p>
         </>
-    )
-}
+    );
+};
 export default Info;

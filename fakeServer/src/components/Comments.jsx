@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-const Comments = (props) => {
-    const { post, currentUser } = props;
+const Comments = ({post, currentUser}) => {
     const [comments, setComments] = useState();
-    const [addComment, setAddComment] = useState(false);
-    const [updateComment, setUpdateComment] = useState(false);
+    const [isToAddComment, setIsToAddComment] = useState(false);
+    const [updateComment, setUpdateComment] = useState('');
     const [body, setBody] = useState('');
     const [name, setName] = useState('');
 
+    console.log("props:", post, currentUser)
     useEffect(() => {
             fetch(`http://localhost:3000/comments?postId=${post.id}`)
                 .then(response => response.json())
@@ -29,7 +29,7 @@ const Comments = (props) => {
         setComments(prevComments => [...prevComments, addedComment]);
         setBody('');
         setName('');
-        setAddComment(false);
+        setIsToAddComment(false);
     }
 
     const deleteComment = (deleteCommentId) => {
@@ -46,10 +46,9 @@ const Comments = (props) => {
         let copyUpdate = [];
         comments.map((comment, i) => {
             // postToUpdate.id == post.id ? copyUpdate[post.id] = true : copyUpdate[post.id] = false;
-            commentToUpdate.id == comment.id ? copyUpdate[comment.id] = true : copyUpdate[comment.id] = false;
+            commentToUpdate.id == comment.id ? copyUpdate[i] = true : copyUpdate[i] = false;
         });
         setUpdateComment(copyUpdate);
-        setName(commentToUpdate.name);
     }
 
     const updateCommentFunc = (updateCommentObj) => {
@@ -68,12 +67,12 @@ const Comments = (props) => {
         }));
         setBody('');
         let copyUpdate = [];
-        comments.map((comment) => { copyUpdate[comment.id] = false; });
+        comments.map((comment ,i) => { copyUpdate[i] = false; });
         setUpdateComment(copyUpdate);
     }
 
     const cancel = () => {
-        setAddComment(false);
+        setIsToAddComment(false);
         setBody('');
         setName('');
         setUpdateComment(false);
@@ -96,7 +95,7 @@ const Comments = (props) => {
                                 <br />body: {comment.body}</p>
                             {comment.email == currentUser.email && <>
                                 <button onClick={() => deleteComment(comment.id)}>delete comment</button>
-                                {updateComment[comment.id] ? <>
+                                {updateComment[i] ? <>
                                     <input
                                         type="text"
                                         placeholder="body"
@@ -113,7 +112,7 @@ const Comments = (props) => {
                     })}
                 </>
             }
-            {addComment ?
+            {isToAddComment ?
                 <>
                     <input
                         type="text"
@@ -130,7 +129,7 @@ const Comments = (props) => {
                     <button onClick={() => addNewComment(post.id)}>add</button>
                     <button onClick={() => { cancel() }}>cancel</button><br />
                 </>
-                : <button onClick={() => setAddComment(true)}>add comment</button>
+                : <button onClick={() => setIsToAddComment(true)}>add comment</button>
             }
         </>
     )

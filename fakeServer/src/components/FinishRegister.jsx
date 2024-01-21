@@ -29,7 +29,7 @@ const FinishRegister = ({userName, password})=>{
         const geo = new Geo(lat, lng);
         const adress = new Address(street, suite, city, zipcode, geo);
         const company = new Company(companyName, catchPhrase, bs);
-        const newUser = new User(userId, name, userName, email, adress, phone, password, company);
+        const newUser = new User(userId, name, userName, email, adress, phone, '', company);
         console.log("new user", newUser);
 
         

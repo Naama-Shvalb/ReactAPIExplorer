@@ -1,8 +1,6 @@
 import React, { useState,  createContext , useParams} from 'react';
 import { Outlet } from 'react-router-dom';
-import { Navigate, useNavigate } from 'react-router-dom';
-import Info from './Info';
-import Todos from './Todos';
+import { useNavigate } from 'react-router-dom';
 import './SignUpLogin.css';
 
 const Home = () => {
@@ -16,30 +14,14 @@ const Home = () => {
 
     };
 
-    // const handleInfoBtn = () => {
-    //     navigate('info');
-    // }
-
-    // const handleTodosBtn = () => {
-    //     navigate('todos');
-    // }
-
-    // const handlePostsBtn = ()=>{
-    //     navigate('posts');
-    // }
-
-    const handelNavBtn = (target) => {
-        navigate(`${target}`);
-    };
-
     return(
         <>
             <h1>Hi {currentUser.name}</h1>
             <button onClick={handleLogOut}>Logout</button>
-            <button onClick={()=>handelNavBtn("albums")}>Albums</button>
-            <button onClick={()=>handelNavBtn("posts")}>Posts</button>
-            <button onClick={()=>handelNavBtn("todos")}>Todos</button>
-            <button onClick={()=>handelNavBtn("info")}>Info</button>
+            <button onClick={()=>navigate("albums")}>Albums</button>
+            <button onClick={()=>navigate("posts")}>Posts</button>
+            <button onClick={()=>navigate("todos")}>Todos</button>
+            <button onClick={()=>navigate("info")}>Info</button>
             <Outlet />
         </>
     );

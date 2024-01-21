@@ -9,7 +9,8 @@ import Posts from './components/Posts';
 import Albums from './components/Albums';
 import Info from './components/Info';
 import FinishRegister from './components/FinishRegister';
-
+import Comments from './components/Comments';
+ 
 
 function App() {
 
@@ -30,7 +31,9 @@ function App() {
             <Route path="home" element={<Home />}>
               <Route path="info" element={<Info />} />
               <Route path='todos' element={<Todos />} />
-              <Route path="posts" element={<Posts />} />
+              <Route path="posts" element={<Posts />} >
+                <Route path="comments" element={<Comments />}/>
+              </Route>
               <Route path="albums" element={<Albums />} />
             </Route>
           </Route>

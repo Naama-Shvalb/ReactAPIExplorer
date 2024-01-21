@@ -17,7 +17,7 @@ const Todos = () => {
     fetch(`http://localhost:3000/todos?userId=${currentUser.id}`)
     .then(response => response.json())
     .then(json => {setTodos(json);});
-    });
+    }, []);
 
     if(!todos){
         return <></>;
@@ -31,9 +31,62 @@ const Todos = () => {
         setIsDone(false);
     };
 
-    const handleSelectTodos = () => {
+    const compareAlphabetical = ( a, b ) => {
+        if ( a.title < b.title ){
+          return -1;
+        }
+        if ( a.title > b.title ){
+          return 1;
+        }
+        return 0;
+      }
+
+      const compareSerially = ( a, b ) => {
+        if ( a.id < b.id ){
+          return -1;
+        }
+        if ( a.id > b.id ){
+          return 1;
+        }
+        return 0;
+      }
+
+      const compareCompletion = ( a, b ) => {
+        if ( a.completed < b.completed ){
+          return -1;
+        }
+        if ( a.completed > b.completed ){
+          return 1;
+        }
+        return 0;
+      }
+      
+
+   
+    const handleSelectTodos = (selectType) => {
+        const currentTodos = todos;
+        if(selectType === 'alphabetical'){
+            currentTodos.sort(compareAlphabetical);
+        }
+        else if(selectType === 'serially'){
+            currentTodos.sort(compareSerially);
+        }
+        else if(selectType === 'random'){
+            currentTodos.sort((a, b) => 0.5 - Math.random());
+        }
+        else if(selectType === 'completion'){
+            currentTodos.sort(compareCompletion);
+        }
+        console.log("todos usestate:", todos)
+
+        setTodos(copyTodos);
+
 
     };
+
+    
+
+
 
    
     return(
@@ -41,11 +94,11 @@ const Todos = () => {
         <h1>Todos</h1>
         <div>
             <div>
-            <h2>Select todos for user {userId}</h2>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
+                <h2>Select todos for user {userId}:</h2>
+                <button onClick={()=>handleSelectTodos('serially')} >Show serially</button>
+                <button onClick={()=>handleSelectTodos('alphabetical')}>View in alphabetical order</button>
+                <button onClick={()=>handleSelectTodos('completion')}>View by task completion</button>
+                <button onClick={()=>handleSelectTodos('random')}>Show in random order</button>
             </div>
             {todos.map((todo, index) => (
                 <div key={index}>

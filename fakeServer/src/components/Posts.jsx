@@ -1,17 +1,18 @@
 
 import { useState, useEffect } from 'react';
-import Comments from './Comments';
+import { Outlet, Navigate } from 'react-router-dom';
 import './posts.css';
 
 const Posts = () => {
 
   const [posts, setPosts] = useState();
+  const [currentPost, setCurrentPost] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [addPost, setAddPost] = useState(false);
-  const [details, setDetail] = useState(false);
-  const [updatePost, setUpdatePost] = useState(false);
-  const [displayComments, SetDisplayComments] = useState(false);
+  const [isToAddPost, setIsToAddPost] = useState(false);
+  const [displayDetails, setDisplayDetails] = useState('');
+  const [isToUpdatePost, setIsToUpdatePost] = useState(false);
+  const [displayComments, SetDisplayComments] = useState('');
 
   const currentUser = JSON.parse(localStorage.getItem("activeUser"));
 
@@ -22,13 +23,14 @@ const Posts = () => {
   }, []);
 
 
-  const getMoreDetails = (showPostId) => {
+  const getMoreDetails = (displayedPost) => {
+    setCurrentPost(displayedPost)
     SetDisplayComments(false);
     let copyDetail = [];
     posts.map((post, i) => {
-      showPostId == post.id ? copyDetail[post.id] = true : copyDetail[post.id] = false;
+      displayedPost.id == post.id ? copyDetail[i] = true : copyDetail[i] = false;
     });
-    setDetail(copyDetail);
+    setDisplayDetails(copyDetail);
   };
 
   const deletePost = (deletePostId) => {
@@ -52,37 +54,24 @@ const Posts = () => {
     setPosts(prevPosts => [...prevPosts, addedPost]);
     setBody('');
     setTitle('');
-    setAddPost(false);
+    setIsToAddPost(false);
   };
 
-  const sendToUpdatePost = (postToUpdate) => {
-    let copyUpdate = [];
-    posts.map((post, i) => {
-      // postToUpdate.id == post.id ? copyUpdate[post.id] = true : copyUpdate[post.id] = false;
-      postToUpdate.id == post.id ? copyUpdate[post.id] = true : copyUpdate[post.id] = false;
-    });
-    setUpdatePost(copyUpdate);
-    setTitle(postToUpdate.title);
-    // setBody(postToUpdate.body);
-  };
+  const postUpdate = (postToUpdate) => {
+    const updatedPost = { "uesrId": currentUser.id, "id": postToUpdate.id, "title": postToUpdate.title, "body": body };
 
-  const postUpdate = (postToUpdateId) => {
     // fetch- upddate post
 
-    const updatedPost = { "uesrId": currentUser.id, "id": postToUpdateId, "title": title, "body": body };
     setPosts(prevPosts => prevPosts.map((post) => {
-      return post.id == postToUpdateId ? updatedPost : post;
+      return post.id == postToUpdate.id ? updatedPost : post;
     }));
     setBody('');
-    setTitle('');
-    let copyUpdate = [];
-    posts.map((post) => { copyUpdate[post.id] = false; });
-    setUpdatePost(copyUpdate);
+    setIsToUpdatePost(false);
   };
 
   const cancel = () => {
-    setAddPost(false);
-    setUpdatePost(false);
+    setIsToAddPost(false);
+    setIsToUpdatePost(false);
     setTitle('');
     setBody('');
   };
@@ -93,45 +82,41 @@ const Posts = () => {
   return (
     <>
       <h1>Posts</h1>
-      {posts.map((post, index) => {
-        return (
-          <div className={`${details[post.id]}`} key={index}>
+      {posts.map((post, index) => (
+          <div className={`${displayDetails[post.id]}`} key={index}>
             <p>id: {post.id} title: {post.title}</p>
-            {details[post.id] ?
+            {displayDetails[index] ?
               <>
                 <p>body: {post.body}</p>
-                {updatePost[post.id] ?
+                {isToUpdatePost ?
                   <>
                     <br />
-                    {/* <input
-                      type="text"
-                      placeholder="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    /> */}
                     <input
                       type="text"
                       placeholder="body"
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
                     />
-                    <button onClick={() => postUpdate(post.id)}>update</button>
+                    <button onClick={() => postUpdate(post)}>update</button>
                     <button onClick={() => { cancel(); }}>cancel</button><br/>
                   </>
-                  : <button onClick={() => sendToUpdatePost(post)}>update post</button>
+                  : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
                 }
                 <button onClick={() => deletePost(post.id)}>delete post</button>
                 {!displayComments ?
                   <button onClick={() => SetDisplayComments(true)} >show all comments</button>
-                  : <Comments post={post} currentUser={currentUser}/>
+                  : 
+                  <><Navigate to={"comments"} state={{post: currentPost , currentUser: currentUser}}/>
+                  <Outlet/>
+                  </>
+                  
                 }
           
               </>
-              : <button onClick={() => getMoreDetails(post.id)}>more details</button>}
+              : <button onClick={() => getMoreDetails(post)}>open post</button>}
           </div>
-        );
-      })}
-      {addPost ? <>
+        ))}
+      {isToAddPost ? <>
         <input
           type="text"
           placeholder="title"
@@ -147,7 +132,7 @@ const Posts = () => {
         <button onClick={addNewPost}>add</button>
         <button onClick={() => { cancel(); }}>cancel</button>
       </>
-        : <button onClick={() => setAddPost(true)}>add post</button>
+        : <button onClick={() => setIsToAddPost(true)}>add post</button>
       }
 
     </>

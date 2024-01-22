@@ -10,6 +10,7 @@ import Albums from './components/Albums';
 import Info from './components/Info';
 import FinishRegister from './components/FinishRegister';
 import Comments from './components/Comments';
+import Photos from './components/Photos';
  
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                 <Route path="comments" element={<Comments />}/>
               </Route>
               <Route path="albums" element={<Albums />} />
+              <Route path='albums/:albumId/photos' element={<Photos />} />
             </Route>
           </Route>
           <Route path="login" element={<Login />} />

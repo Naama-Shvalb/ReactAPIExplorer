@@ -607,7 +607,7 @@
       "body": "fghfjg"
     },
     {
-      "id": 12,
+      "id": "12",
       "userId": "1",
       "title": "tyfttt",
       "body": "ujkfhd"
@@ -4620,13 +4620,6 @@
   "photos": [
     {
       "albumId": 1,
-      "id": "1",
-      "title": "accusamus beatae ad facilis cum similique qui sunt",
-      "url": "https://via.placeholder.com/600/92c952",
-      "thumbnailUrl": "https://via.placeholder.com/150/92c952"
-    },
-    {
-      "albumId": 1,
       "id": "2",
       "title": "reprehenderit est deserunt velit ipsam",
       "url": "https://via.placeholder.com/600/771796",
@@ -4694,34 +4687,6 @@
       "title": "nihil at amet non hic quia qui",
       "url": "https://via.placeholder.com/600/1ee8a4",
       "thumbnailUrl": "https://via.placeholder.com/150/1ee8a4"
-    },
-    {
-      "albumId": 1,
-      "id": "12",
-      "title": "mollitia soluta ut rerum eos aliquam consequatur perspiciatis maiores",
-      "url": "https://via.placeholder.com/600/66b7d2",
-      "thumbnailUrl": "https://via.placeholder.com/150/66b7d2"
-    },
-    {
-      "albumId": 1,
-      "id": "13",
-      "title": "repudiandae iusto deleniti rerum",
-      "url": "https://via.placeholder.com/600/197d29",
-      "thumbnailUrl": "https://via.placeholder.com/150/197d29"
-    },
-    {
-      "albumId": 1,
-      "id": "14",
-      "title": "est necessitatibus architecto ut laborum",
-      "url": "https://via.placeholder.com/600/61a65",
-      "thumbnailUrl": "https://via.placeholder.com/150/61a65"
-    },
-    {
-      "albumId": 1,
-      "id": "15",
-      "title": "harum dicta similique quis dolore earum ex qui",
-      "url": "https://via.placeholder.com/600/f9cee5",
-      "thumbnailUrl": "https://via.placeholder.com/150/f9cee5"
     },
     {
       "albumId": 1,
@@ -4960,13 +4925,6 @@
       "title": "quasi quae est modi quis quam in impedit",
       "url": "https://via.placeholder.com/600/2cd88b",
       "thumbnailUrl": "https://via.placeholder.com/150/2cd88b"
-    },
-    {
-      "albumId": 1,
-      "id": "50",
-      "title": "et inventore quae ut tempore eius voluptatum",
-      "url": "https://via.placeholder.com/600/9e59da",
-      "thumbnailUrl": "https://via.placeholder.com/150/9e59da"
     },
     {
       "albumId": 2,
@@ -41368,7 +41326,7 @@
       }
     },
     {
-      "id": 101122,
+      "id": "101122",
       "name": "",
       "email": "",
       "address": {
@@ -41389,7 +41347,7 @@
       }
     },
     {
-      "id": 101123,
+      "id": "101123",
       "name": "s",
       "email": "s",
       "address": {

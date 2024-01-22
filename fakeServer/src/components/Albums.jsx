@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Photos from './Photos';
 const Albums = () => {
 
     const [albums, setAlbums] = useState('');
-    const [displayPhotos, setDisplayPhotos] = useState(false);
+    const [displayPhotos, setDisplayPhotos] = useState('');
 
     const currentUser = JSON.parse(localStorage.getItem("activeUser"));
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`http://localhost:3000/albums?userId=${currentUser.id}`)
@@ -15,12 +15,16 @@ const Albums = () => {
             .then(json => setAlbums(json))
     }, [])
 
-    const showPhotos = (showAlbumId) => {
-        let copyDetail = [];
-        albums.map((album, i) => {
-            showAlbumId == album.id ? copyDetail[i] = true : copyDetail[i] = false;
-        });
-        setDisplayPhotos(copyDetail);
+    // const showPhotos = (showAlbumId) => {
+    //     let copyDetail = [];
+    //     albums.map((album, i) => {
+    //         showAlbumId == album.id ? copyDetail[i] = true : copyDetail[i] = false;
+    //     });
+    //     setDisplayPhotos(showAlbumId);
+    // }
+
+    const displayPhotosFunc = (albumToDispayPbj) => {
+        navigate(`${albumToDispayPbj}/photos`, { state: { album: albumToDispayPbj } });
     }
 
     if (albums == '')
@@ -33,16 +37,11 @@ const Albums = () => {
             <label></label>
             {albums.map((album, index) => (
                 <div key={index}>
-                    <p>id: {album.id}, title: {album.title}</p><br/>
-                    {!displayPhotos[index]?
-                    <button onClick={()=>showPhotos(album.id)}>open album</button>
-                    :<Link to={`${album.id}/photos`} state={{ "album": album }}>fjggh</Link>}
-                     {/* :<Photos album={ album } />} */}
-                    {/* :<Link to={`${album.id}/photos`} state: { album: album }}}>fjggh</Link>  */}
-                    {/* <Link to={`${album.id}/photos`} state={{album,}}>Contact</Link> */}
-                    {/* // :<button onClick={()=>showPhotos(album.id)}>display photos</button> */}
+                    <p>id: {album.id}, title: {album.title}</p><br />
+                    <button onClick={() => displayPhotosFunc(album)}>open album</button>
                 </div>
             ))}
+            <button onClick={()=>isToAddAlbumFunc(false)}>add album</button>
         </>
     )
 }

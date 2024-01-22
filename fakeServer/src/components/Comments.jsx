@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-const Comments = ({state}) => {
-
+const Comments = () => {
+    const location=useLocation();
+    const {post, currentUser} =location.state;
     const [commentId, setCommentsId] = useState('');
-    const [comments, setComments] = useState();
+    const [comments, setComments] = useState([]);
     const [isToAddComment, setIsToAddComment] = useState(false);
     const [updateComment, setUpdateComment] = useState('');
     const [body, setBody] = useState('');
     const [name, setName] = useState('');
 
-    const { currentPost, currentUser } = state;
-
-    console.log("props:", currentPost, currentUser);
     useEffect(() => {
-            fetch(`http://localhost:3000/comments?postId=${currentPost.id}`)
+            fetch(`http://localhost:3000/comments?postId=${post.id}`)
                 .then(response => response.json())
                 .then(json => setComments(json));
     }, []);
@@ -58,23 +57,25 @@ const Comments = ({state}) => {
     };
 
     const updateCommentFunc = (updateCommentObj) => {
-        const updatedComment = { "postId": updateCommentObj.postId, "id": updateCommentObj.id, "name": updateCommentObj.name, "email": updateCommentObj.email, "body": body };
-        
+        // const updatedComment = { "postId": updateCommentObj.postId, "id": updateCommentObj.id, "name": updateCommentObj.name, "email": updateCommentObj.email, "body": body };
+
         // fetch update comment 
         fetch(`http://localhost:3000/comments/${updateCommentObj.id}`, {
-            method: "PUT",
-            body: JSON.stringify(updatedComment),
-          })
-            .then(response => response.json())
-            .catch(error => console.error('Error:', error));
-
+            method: "PATCH",
+            body: JSON.stringify({
+                "body": body
+            })
+        })
+            .then((response) => response.json());
+            const updatedComment=Object.entries(updateCommentObj).map((entry)=>{
+                if(entry[0]=="body")
+                    entry[1]=body;
+            })
         setComments(prevComments => prevComments.map((comment) => {
             return comment.id == updateCommentObj.id ? updatedComment : comment;
         }));
         setBody('');
-        let copyUpdate = [];
-        comments.map((comment ,i) => { copyUpdate[i] = false; });
-        setUpdateComment(copyUpdate);
+        setUpdateComment('');
     };
 
     const cancel = () => {
@@ -112,10 +113,6 @@ const Comments = ({state}) => {
     // https://dev.to/collegewap/react-fetch-example-getpostputdelete-with-api-3l00
 
     
-    if (comments == undefined)
-        return (
-            <></>
-        );
     return (
         <>
         {(comments != '') &&
@@ -157,7 +154,7 @@ const Comments = ({state}) => {
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                     />
-                    <button onClick={() => addNewComment(currentPost.id)}>add</button>
+                    <button onClick={() => addNewComment(post.id)}>add</button>
                     <button onClick={() => { cancel(); }}>cancel</button><br />
                 </>
                 : <button onClick={() => setIsToAddComment(true)}>add comment</button>

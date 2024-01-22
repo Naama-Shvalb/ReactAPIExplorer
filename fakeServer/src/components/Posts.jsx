@@ -5,7 +5,7 @@ import './posts.css';
 
 const Posts = () => {
 
-  const [posts, setPosts] = useState();
+  const [posts, setPosts] = useState([]);
   const [postId, setPostId] = useState('');
   const [currentPost, setCurrentPost] = useState('');
   const [title, setTitle] = useState('');
@@ -36,6 +36,10 @@ const Posts = () => {
 
   const deletePost = (deletePostId) => {
     //fetch- delete post
+    fetch(`http://localhost:3000/posts/${deletePostId}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json());
 
     setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
   };
@@ -126,7 +130,7 @@ const Posts = () => {
                       onChange={(e) => setBody(e.target.value)}
                     />
                     <button onClick={() => postUpdate(post)}>update</button>
-                    <button onClick={() => { cancel(); }}>cancel</button><br/>
+                    <button onClick={() => cancel()}>cancel</button><br/>
                   </>
                   : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
                 }
@@ -138,7 +142,7 @@ const Posts = () => {
                   // </button>
 
                   : 
-                  <><Navigate to={"comments"} state={{currentPost: currentPost , currentUser: currentUser}}/>
+                  <><Navigate to={"comments"} state={{post: post , currentUser: currentUser}}/>
                   <Outlet/>
                    </>
                   

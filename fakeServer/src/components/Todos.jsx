@@ -7,10 +7,14 @@ const Todos = () => {
 
     const [todos, setTodos] = useState('');
     const [isDone, setIsDone] = useState(false);
-
+    const [title, setTitle] = useState('');
+    const [copleted, setComplited] = useState('');
+    const [forceRender, setForseRender] = useState(false);
+    const [todoId, setTodoId] = useState('');
+    const [isToAddTodo, setIsToAddTodo] = useState('');
+    const [isToUpdateTodo, setIsToUpdateTodo] = useState('');//array
 
     const currentUser = JSON.parse(localStorage.getItem("activeUser"));
-
 
     useEffect(()=>{
 
@@ -23,12 +27,108 @@ const Todos = () => {
         return <></>;
     }
 
-    const handleCheckboxChange = (e) => {
+    const handleCheckboxChange = (e, todo) => {
         console.log("checked:", e.target.checked);        
-        if (e.target.checked) {
-            setIsDone(true);
-        }
-        setIsDone(false);
+        // if (e.target.checked) {
+        //     setIsDone(true);
+        // }
+        // else{
+        // setIsDone(false);
+        // }
+        todo.completed = e.target.checked;
+        updateTodo(todo);
+       
+    };
+
+    const deleteTodo = (todoId) => {
+      fetch(`http://localhost:3000/todos/${todoId}`, {
+        method: "DELETE",
+      })
+        .then(response => response.json());
+
+      setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; }));
+    };
+   
+    const addNewTodo = () => {
+      
+      getAndSetNextTodoId();
+      updateNextTodoId();
+      // const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
+      const addedTodo = { "id": todoId, 
+      "userId": currentUser.id, 
+      "title": title, 
+      "completed": copleted }; 
+      fetch('http://localhost:3000/todos', {
+        method: 'POST',
+        body: JSON.stringify(addedTodo),
+      })
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+  
+      setTodos(prevTodos => [...prevTodos, addedTodo]);
+      setTitle('');
+      setIsToAddTodo(false);  
+    };
+
+    const sendToUpdateTodo = (todoToUpdate) => {
+      let copyUpdate = [];
+      todos.map((comment, i) => {
+          // postToUpdate.id == post.id ? copyUpdate[post.id] = true : copyUpdate[post.id] = false;
+          todoToUpdate.id == comment.id ? copyUpdate[i] = true : copyUpdate[i] = false;
+      });
+      setIsToUpdateTodo(copyUpdate);
+    };
+
+    const updateTodo = (todo) => {
+      const updatedTodo = { 
+      "userId": todo.userId,
+      "id": todo.id,
+      "title": todo.title,
+      "completed": todo.completed };
+
+      fetch(`http://localhost:3000/todos/${todo.id}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedTodo ),
+      })
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+
+        console.log("second before", updatedTodo);
+        setTodos(prevTodos => prevTodos.map((todo) => {
+          return todo.id == updatedTodo.id ? updatedTodo : todo;  }));
+        setIsToUpdateTodo(false);
+    };
+   
+    const cancel = () => {
+      setIsToAddTodo(false);
+      setIsToUpdateTodo(false);
+      setTitle('');
+      //setBody('');
+    };
+
+    const getAndSetNextTodoId = () => {
+      fetch("http://localhost:3000/nextID", {
+          method: 'GET'
+      })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log(json);
+            setTodoId(json[0].nextTodoId);
+        });
+    };
+  
+    const updateNextTodoId = () => {
+      fetch("http://localhost:3000/nextID/1", {
+              method: "PATCH",
+              body: JSON.stringify({
+                  "nextTodoId": todoId + 1
+              }),
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+              },
+          })
+              .then((response) => response.json())
+              .then((json) => console.log(json));
     };
 
     const compareAlphabetical = ( a, b ) => {
@@ -39,30 +139,28 @@ const Todos = () => {
           return 1;
         }
         return 0;
-      }
+      };
 
-      const compareSerially = ( a, b ) => {
-        if ( a.id < b.id ){
-          return -1;
-        }
-        if ( a.id > b.id ){
-          return 1;
-        }
-        return 0;
+    const compareSerially = ( a, b ) => {
+      if ( a.id < b.id ){
+        return -1;
       }
-
-      const compareCompletion = ( a, b ) => {
-        if ( a.completed < b.completed ){
-          return -1;
-        }
-        if ( a.completed > b.completed ){
-          return 1;
-        }
-        return 0;
+      if ( a.id > b.id ){
+        return 1;
       }
-      
+      return 0;
+    };
 
-   
+    const compareCompletion = ( a, b ) => {
+      if ( a.completed < b.completed ){
+        return -1;
+      }
+      if ( a.completed > b.completed ){
+        return 1;
+      }
+      return 0;
+    };
+        
     const handleSelectTodos = (selectType) => {
         const currentTodos = todos;
         if(selectType === 'alphabetical'){
@@ -77,18 +175,15 @@ const Todos = () => {
         else if(selectType === 'completion'){
             currentTodos.sort(compareCompletion);
         }
-        console.log("todos usestate:", todos)
+        console.log("todos usestate:", todos);
 
-        setTodos(copyTodos);
-
+        setTodos(currentTodos);
+        setForseRender(!forceRender);
+        console.log("todos usestate after:", todos);
 
     };
 
-    
-
-
-
-   
+  
     return(
         <>
         <h1>Todos</h1>
@@ -102,14 +197,40 @@ const Todos = () => {
             </div>
             {todos.map((todo, index) => (
                 <div key={index}>
-                    <p>{index}.  {todo.title} <input type="checkbox" defaultChecked={todo.completed} value={isDone} onChange={()=>{handleCheckboxChange(event); console.log("copleted:",todo.completed);}}/>
+                    <p>{index}.  {todo.title}
+                     <input type="checkbox" defaultChecked={todo.completed} value={isDone} onChange={()=>{handleCheckboxChange(event, todo);}}/>
                     </p>
-                    
-
+                    {/*comment.email == currentUser.email &&*/ <>
+                        <button onClick={() => deleteTodo(todo.id)}>delete todo</button>
+                        {isToUpdateTodo[index] ? 
+                        <>
+                            <input
+                                type="text"
+                                placeholder="title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                            <button onClick={() => { updateTodo(todo); }}>update</button>
+                            <button onClick={() => { cancel(); }}>cancel</button>
+                        </>
+                            : <button onClick={() => sendToUpdateTodo(todo)}>update todo</button>
+                        }
+                    </>}
                 </div>
-
-
             ))}
+            {isToAddTodo ?
+            <>
+            <input
+                type="text"
+                placeholder="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+            />
+            <button onClick={() => addNewTodo(todoId)}>add</button>
+            <button onClick={() => { cancel(); }}>cancel</button><br />
+            </>
+            : <button onClick={() => setIsToAddTodo(true)}>add comment</button>
+            }
         </div>
         </>
 

@@ -6,6 +6,7 @@ import './posts.css';
 const Posts = () => {
 
   const [posts, setPosts] = useState();
+  const [postId, setPostId] = useState('');
   const [currentPost, setCurrentPost] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -24,7 +25,7 @@ const Posts = () => {
 
 
   const getMoreDetails = (displayedPost) => {
-    setCurrentPost(displayedPost)
+    setCurrentPost(displayedPost);
     SetDisplayComments(false);
     let copyDetail = [];
     posts.map((post, i) => {
@@ -39,11 +40,36 @@ const Posts = () => {
     setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
   };
 
+  const getAndSetNextPostId = () => {
+    fetch("http://localhost:3000/nextID", {
+        method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((json) => {
+          console.log(json);
+          setPostId(json[0].nextPostId);
+      });
+  };
+
+  const updateNextPostId = () => {
+    fetch("http://localhost:3000/nextID/1", {
+            method: "PATCH",
+            body: JSON.stringify({
+                "nextPostId": postId + 1
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+  };
+
   const addNewPost = () => {
-    const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
-    const addedPost = { "id": ID, "userId": currentUser.id, "title": title, "body": body };
-    
-    //fetch- add post
+    getAndSetNextPostId();
+    updateNextPostId();
+    // const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
+    const addedPost = { "id": postId, "userId": currentUser.id, "title": title, "body": body }; 
     fetch('http://localhost:3000/posts', {
       method: 'POST',
       body: JSON.stringify(addedPost),
@@ -55,6 +81,8 @@ const Posts = () => {
     setBody('');
     setTitle('');
     setIsToAddPost(false);
+
+    
   };
 
   const postUpdate = (postToUpdate) => {
@@ -105,10 +133,14 @@ const Posts = () => {
                 <button onClick={() => deletePost(post.id)}>delete post</button>
                 {!displayComments ?
                   <button onClick={() => SetDisplayComments(true)} >show all comments</button>
+                  // <button onClick={() => {SetDisplayComments(true); return(<Navigate to={"comments"} state={{ currentPost: currentPost, currentUser: currentUser }} />);}}>
+                  //   show all comments
+                  // </button>
+
                   : 
-                  <><Navigate to={"comments"} state={{post: currentPost , currentUser: currentUser}}/>
+                  <><Navigate to={"comments"} state={{currentPost: currentPost , currentUser: currentUser}}/>
                   <Outlet/>
-                  </>
+                   </>
                   
                 }
           

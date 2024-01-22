@@ -26,12 +26,14 @@ const FinishRegister = ({userName, password})=>{
     
     const handleFinisRegister = ()=> {
 
+        getAndSetNextUserId();
+        updateNextUserId();
+
         const geo = new Geo(lat, lng);
         const adress = new Address(street, suite, city, zipcode, geo);
         const company = new Company(companyName, catchPhrase, bs);
         const newUser = new User(userId, name, userName, email, adress, phone, '', company);
         console.log("new user", newUser);
-
         
         fetch('http://localhost:3000/users', {
           method: 'POST',
@@ -44,15 +46,30 @@ const FinishRegister = ({userName, password})=>{
         loginUser(newUser);
     };
 
-    function registerWrapper() {
-        fetch('http://localhost:3000/users')
-        .then(response => response.json())
-        .then(data => {
-            const userId = parseInt(data[data.length-1].id) + 1;
-            setUserId(userId);
+    const getAndSetNextUserId = () => {
+      fetch("http://localhost:3000/nextID", {
+        method: 'GET'
+      })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log(json);
+            setUserId(json[0].nextUserId);
         });
-        handleFinisRegister();
-    }
+    };
+
+    const updateNextUserId = () => {
+      fetch("http://localhost:3000/nextID/1", {
+            method: "PATCH",
+            body: JSON.stringify({
+                "nextUserId": userId + 1
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+    };
 
     const loginUser = (user) => {
       localStorage.setItem('activeUser', JSON.stringify(user));
@@ -140,7 +157,7 @@ const FinishRegister = ({userName, password})=>{
                     onChange={(e) => setBs(e.target.value)}
                 />
             
-              <button className='signUpBtn' onClick={registerWrapper}>Signup</button>
+              <button className='signUpBtn' onClick={handleFinisRegister}>Signup</button>
               <br />
 
             </div>

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from 'react-router-dom';
+import { UserContext } from '../contexts/UserProvider';
 
 const Albums = () => {
 
@@ -7,12 +8,15 @@ const Albums = () => {
     const [isToAddAlbum, setIsToAddAlbum] = useState(false);
     const [title, setTitle] = useState('');
     const [albumId, setAlbumId] = useState('');
+    const [toSearchId, setToSearchId] = useState('');
+    const [toSearchTitle, setToSearchTitle] = useState('');
+    const [searchAlbumsdBy, setSearchAlbumsBy] = useState('');  
 
-    const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`http://localhost:3000/albums?userId=${currentUser.id}`)
+        fetch(`http://localhost:3000/albums?userId=${user.id}`)
             .then(response => response.json())
             .then(json => setAlbums(json));
         fetch("http://localhost:3000/nextID", {
@@ -23,12 +27,12 @@ const Albums = () => {
                 console.log(json);
                 setAlbumId(json[0].nextAlbumId);
             });
-    }, [])
+    }, []);
 
     const addAlbum = () => {
         updateNextPostId();
 
-        const addedAlbum = { "userId": currentUser.id, "id": `${albumId}`, "title": title }
+        const addedAlbum = { "userId": user.id, "id": `${albumId}`, "title": title };
         fetch('http://localhost:3000/albums', {
             method: 'POST',
             body: JSON.stringify(addedAlbum),
@@ -39,12 +43,24 @@ const Albums = () => {
         setTitle('');
         setIsToAddAlbum(false);
         getAndSetNextPostId();
-    }
+    };
+
+    const searchAlbums = (propertytype, property) => {
+        if (property === '' || property === undefined) {
+          fetch(`http://localhost:3000/albums?userId=${user.id}`)
+              .then(response => response.json())
+              .then(json => setAlbums(json));
+        } else {
+          fetch(`http://localhost:3000/albums?${propertytype}=${property}`)
+              .then(response => response.json())
+              .then(json => setAlbums(json));
+        }
+      };
 
     const cancel = () => {
         setTitle('');
         setIsToAddAlbum(false);
-    }
+    };
 
     const getAndSetNextPostId = () => {
         fetch("http://localhost:3000/nextID", {
@@ -74,6 +90,36 @@ const Albums = () => {
     return (
         <>
             <h1>Albums</h1>
+            <div>
+                <h2>Search Albums</h2>
+                {searchAlbumsdBy ==='id' ?
+                <>
+                <input
+                    type="number"
+                    placeholder="id"
+                    value={toSearchId}
+                    onChange={(e) => setToSearchId(e.target.value)}
+                />
+                <button onClick={() => searchAlbums(searchAlbumsdBy, toSearchId)}>search</button>
+                <button onClick={() => { cancel(); }}>cancel</button><br />
+                </>
+                :searchAlbumsdBy === 'title'?
+                    <>
+                    <input
+                        type="text"
+                        placeholder="title"
+                        value={toSearchTitle}
+                        onChange={(e) => setToSearchTitle(e.target.value)}
+                    />
+                    <button onClick={() => searchAlbums(searchAlbumsdBy, toSearchTitle)}>search</button>
+                    <button onClick={() => { cancel(); }}>cancel</button><br />
+                    </>
+                    :<>
+                    <button onClick={()=>setSearchAlbumsBy('id')}>search by id:</button>
+                    <button onClick={()=>setSearchAlbumsBy('title')}>search by title:</button>
+                    </>
+                }
+            </div>
             <label></label>
             {albums.map((album, index) => (
                 <div key={index}>
@@ -93,6 +139,6 @@ const Albums = () => {
                 </>
                 : <button onClick={() => setIsToAddAlbum(true)}>add album</button>}
         </>
-    )
-}
+    );
+};
 export default Albums;

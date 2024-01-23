@@ -1,6 +1,7 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
+import { UserContext } from '../contexts/UserProvider';
+
 import './posts.css';
 
 const Posts = () => {
@@ -14,11 +15,15 @@ const Posts = () => {
   const [displayDetails, setDisplayDetails] = useState('');
   const [isToUpdatePost, setIsToUpdatePost] = useState(false);
   const [displayComments, SetDisplayComments] = useState('');
+  const [toSearchId, setToSearchId] = useState('');
+  const [toSearchTitle, setToSearchTitle] = useState('');
+  const [searchPostsdBy, setSearchPostsBy] = useState('');
 
-  const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+  //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/posts?userId=${currentUser.id}`)
+    fetch(`http://localhost:3000/posts?userId=${user.id}`)
       .then(response => response.json())
       .then(json => setPosts(json));
     fetch("http://localhost:3000/nextID", {
@@ -40,6 +45,18 @@ const Posts = () => {
       displayedPost.id == post.id ? copyDetail[i] = true : copyDetail[i] = false;
     });
     setDisplayDetails(copyDetail);
+  };
+
+  const searchPosts = (propertytype, property) => {
+    if (property === '' || property === undefined) {
+      fetch(`http://localhost:3000/posts?userId=${user.id}`)
+          .then(response => response.json())
+          .then(json => setPosts(json));
+    } else {
+      fetch(`http://localhost:3000/posts?${propertytype}=${property}`)
+          .then(response => response.json())
+          .then(json => setPosts(json));
+    }
   };
 
   const deletePost = (deletePostId) => {
@@ -79,8 +96,11 @@ const Posts = () => {
 
   const addNewPost = () => {
     updateNextPostId();
-    // const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
-    const addedPost = { "id": postId, "userId": `${currentUser.id}`, "title": title, "body": body };
+    const addedPost = { 
+      "id": postId, 
+      "userId": `${user.id}`, 
+      "title": title, 
+      "body": body };
     fetch('http://localhost:3000/posts', {
       method: 'POST',
       body: JSON.stringify(addedPost),
@@ -95,8 +115,12 @@ const Posts = () => {
     getAndSetNextPostId();
   };
 
-  const postUpdate = (postToUpdate) => {
-    const updatedPost = { "uesrId": currentUser.id, "id": postToUpdate.id, "title": postToUpdate.title, "body": body };
+  const updatePost = (postToUpdate) => {
+    const updatedPost = { 
+      "uesrId": user.id, 
+      "id": postToUpdate.id, 
+      "title": postToUpdate.title, 
+      "body": body };
 
     // fetch- upddate post
 
@@ -110,8 +134,11 @@ const Posts = () => {
   const cancel = () => {
     setIsToAddPost(false);
     setIsToUpdatePost(false);
+    setSearchPostsBy('');
+    setToSearchId('');
     setTitle('');
     setBody('');
+
   };
 
   if (posts == undefined) {
@@ -120,6 +147,36 @@ const Posts = () => {
   return (
     <>
       <h1>Posts</h1>
+      <div>
+        <h2>Search Posts</h2>
+        {searchPostsdBy ==='id' ?
+          <>
+          <input
+              type="number"
+              placeholder="id"
+              value={toSearchId}
+              onChange={(e) => setToSearchId(e.target.value)}
+          />
+          <button onClick={() => searchPosts(searchPostsdBy, toSearchId)}>search</button>
+          <button onClick={() => { cancel(); }}>cancel</button><br />
+          </>
+          :searchPostsdBy === 'title'?
+            <>
+            <input
+                type="text"
+                placeholder="title"
+                value={toSearchTitle}
+                onChange={(e) => setToSearchTitle(e.target.value)}
+            />
+            <button onClick={() => searchPosts(searchPostsdBy, toSearchTitle)}>search</button>
+            <button onClick={() => { cancel(); }}>cancel</button><br />
+            </>
+            :<>
+            <button onClick={()=>setSearchPostsBy('id')}>search by id:</button>
+            <button onClick={()=>setSearchPostsBy('title')}>search by title:</button>
+            </>
+        }
+      </div>
       {posts.map((post, index) => (
         <div className={`${displayDetails[post.id]}`} key={index}>
           <p>id: {post.id} title: {post.title}</p>
@@ -135,7 +192,7 @@ const Posts = () => {
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
                   />
-                  <button onClick={() => postUpdate(post)}>update</button>
+                  <button onClick={() => updatePost(post)}>update</button>
                   <button onClick={() => cancel()}>cancel</button><br />
                 </>
                 : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
@@ -148,7 +205,7 @@ const Posts = () => {
                 // </button>
 
                 :
-                <><Navigate to={`${post.id}/comments`} state={{ post: post, currentUser: currentUser }} />
+                <><Navigate to={`${post.id}/comments`} state={{ post: post}} />
                   <Outlet />
                 </>
 

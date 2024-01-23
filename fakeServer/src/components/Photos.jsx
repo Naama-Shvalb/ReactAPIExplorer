@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const Photos = () => {
@@ -11,7 +11,7 @@ const Photos = () => {
     const [url, setUrl] = useState('');
     const [title, setTitle] = useState('');
     const [isToAddPhoto, setIsToAddPhoto] = useState('');
-    const [photoToUpdateId, setPhotoToUpdateId] = useState('')
+    const [photoToUpdateId, setPhotoToUpdateId] = useState('');
 
     // async function getUserPhotos() {
     //     const response = await fetch(`http://localhost:3000/albums/${id}/photos?_start=${start}&_limit=${limit}`)
@@ -36,22 +36,22 @@ const Photos = () => {
                 console.log(json);
                 setPhotoId(json[0].nextPhotoId);
             });
-    }, [])
+    }, []);
 
     useEffect(() => {
         setThumbnailUrl('');
         setTitle('');
         setUrl('');
-    }, [photoToUpdateId, isToAddPhoto])
+    }, [photoToUpdateId, isToAddPhoto]);
 
     const deletePhoto = (photoIdToDelete) => {
         fetch(`http://localhost:3000/photos/${photoIdToDelete}`, {
             method: "DELETE",
         })
-            .then(response => response.json())
+            .then(response => response.json());
 
         setPhotos(prevPhotos => prevPhotos.filter(photo => { return photo.id !== photoIdToDelete; }));
-    }
+    };
 
     const updatePhoto = (photoToUpdateObj) => {
         if (url == '')
@@ -70,15 +70,15 @@ const Photos = () => {
         })
             .then((response) => response.json())
             .then((json) => console.log(json));
-        const updatedPhoto = {albumId: photoToUpdateObj.albumId, id: photoToUpdateObj.id, title: photoToUpdateObj.title, thumbnailUrl: thumbnailUrl, url: url}
+        const updatedPhoto = {albumId: photoToUpdateObj.albumId, id: photoToUpdateObj.id, title: photoToUpdateObj.title, thumbnailUrl: thumbnailUrl, url: url};
         setPhotos((prevPhotos) =>
             prevPhotos.map((photo) => photo.id === photoToUpdateId ? updatedPhoto : photo));
         setPhotoToUpdateId('');
-    }
+    };
 
     const addPhoto = () => {
         updateNextPostId();
-        const addedPhoto = { "albumId": album.id, "id": `${photoId}`, "title": title, "url": url, "thumbnailUrl": thumbnailUrl }
+        const addedPhoto = { "albumId": album.id, "id": `${photoId}`, "title": title, "url": url, "thumbnailUrl": thumbnailUrl };
         fetch('http://localhost:3000/photos', {
             method: 'POST',
             body: JSON.stringify(addedPhoto),
@@ -88,7 +88,7 @@ const Photos = () => {
         setPhotos(prevPhotos => [...prevPhotos, addedPhoto]);
         setIsToAddPhoto(false);
         getAndSetNextPostId();
-    }
+    };
 
     const getAndSetNextPostId = () => {
         fetch("http://localhost:3000/nextID", {
@@ -120,7 +120,7 @@ const Photos = () => {
         fetch(`http://localhost:3000/photos?albumId=${album.id}&_start=${photoArrayList}&_end=${photoArrayList+10}`)
         .then(response => response.json())
         .then(json => setPhotos(prevPhotos=>[...prevPhotos,json]));
-    }
+    };
 
     return (
         <>
@@ -177,6 +177,6 @@ const Photos = () => {
                 : <button onClick={() => setIsToAddPhoto(true)}>add photo</button>
             }
         </>
-    )
-}
+    );
+};
 export default Photos;

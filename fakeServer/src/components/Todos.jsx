@@ -4,19 +4,9 @@ import { UserContext } from '../contexts/UserProvider';
 
 const Todos = () => {
   const { userId } = useParams();
-  const { userId } = useParams();
+  const { user } = useContext(UserContext);
 
   const [todos, setTodos] = useState('');
-  //const [isDone, setIsDone] = useState(false);
-  const [title, setTitle] = useState('');
-  const [copleted, setComplited] = useState('');
-  const [forceRender, setForseRender] = useState(false);
-  const [todoId, setTodoId] = useState('');
-  const [isToAddTodo, setIsToAddTodo] = useState('');
-  const [toUpdateTodoId, setToUpdateTodoId] = useState('');
-  const [isToSearchTodo, setIsToSearchTodo] = useState(false);
-  const [todos, setTodos] = useState('');
-  //const [isDone, setIsDone] = useState(false);
   const [title, setTitle] = useState('');
   const [completed, setCompleted] = useState('');
   const [forceRender, setForseRender] = useState(false);
@@ -28,17 +18,11 @@ const Todos = () => {
   const [toSearchState, setToSearchState] = useState('');
   const [searchTodosdBy, setSearchTodosBy] = useState('');
 
-  //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
-  const { user } = useContext(UserContext);
-  //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
-  const { user} = useContext(UserContext);
-
-  useEffect(()=>{
-
-  fetch(`http://localhost:3000/todos?userId=${user.id}`)
-  .then(response => response.json())
-  .then(json => {setTodos(json);});
-  }, []);
+  useEffect(() => {
+    fetch(`http://localhost:3000/todos?userId=${user.id}`)
+    .then(response => response.json())
+    .then(json => {setTodos(json);});
+    }, []);
 
   if(!todos){
       return <></>;
@@ -71,22 +55,21 @@ const Todos = () => {
         return (prevTodo);
       }));
       
-    };
+  };
 
-    const searchTodos = (propertytype, property) => {
-      console.log("prr", propertytype, property);
-      if (property === '' || property === undefined) {
-        fetch(`http://localhost:3000/todos?userId=${user.id}`)
-            .then(response => response.json())
-            .then(json => setTodos(json));
-      } else {
-        fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
-            .then(response => response.json())
-            .then(json => setTodos(json));
-      }
-    console.log("ttt", todos);
-      
-    };
+  const searchTodos = (propertytype, property) => {
+    console.log("prr", propertytype, property);
+    if (property === '' || property === undefined) {
+      fetch(`http://localhost:3000/todos?userId=${user.id}`)
+          .then(response => response.json())
+          .then(json => setTodos(json));
+    } else {
+      fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
+          .then(response => response.json())
+          .then(json => setTodos(json));
+    }
+    console.log("ttt", todos); 
+  };
 
   const deleteTodo = (todoId) => {
     fetch(`http://localhost:3000/todos/${todoId}`, {
@@ -97,68 +80,68 @@ const Todos = () => {
       setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; }));
     };
    
-    const addNewTodo = () => {
-      getAndSetNextTodoId();
-      updateNextTodoId();
-      const addedTodo = {  
-      "userId": user.id, 
-      "id": parseInt(todoId),
-      "title": title, 
-      "completed": completed }; 
-      fetch('http://localhost:3000/todos', {
-        method: 'POST',
-        body: JSON.stringify(addedTodo),
-      })
-        .then(response => response.json())
-        .catch(error => console.error('Error:', error));
-  
-      setTodos(prevTodos => [...prevTodos, addedTodo]);
-      setTitle('');
-      setCompleted('');
-      setIsToAddTodo(false);  
-    };
-
-    const handleUpdateTodo = (todoToUpdate) => {
-      let todoToUpdateId;
-      todos.map((todo, index) => {
-          if(todoToUpdate.id === todo.id) {
-            todoToUpdateId = index;
-          }
-        });
-        setToUpdateTodoId(todoToUpdateId);
-      };
-
-    const updateTodo = (todo) => {
-      const updatedTodo = { 
-          "userId": todo.userId,
-          "id": parseInt(todo.id),
-          "title": title,
-          "completed": todo.completed
-      };
-      console.log("uss", updatedTodo.completed);
-  
-      fetch(`http://localhost:3000/todos/${todo.id}`, {
-          method: "PUT",
-          body: JSON.stringify(updatedTodo),
-      })
+  const addNewTodo = () => {
+    getAndSetNextTodoId();
+    updateNextTodoId();
+    const addedTodo = {  
+    "userId": user.id, 
+    "id": parseInt(todoId),
+    "title": title, 
+    "completed": completed }; 
+    fetch('http://localhost:3000/todos', {
+      method: 'POST',
+      body: JSON.stringify(addedTodo),
+    })
       .then(response => response.json())
       .catch(error => console.error('Error:', error));
-  
-      setTodos(prevTodos => prevTodos.map((prevTodo) => 
-          prevTodo.id === updatedTodo.id ? updatedTodo : prevTodo
-      ));
-      //setToUpdateTodoId('');
-      setTitle('');
+
+    setTodos(prevTodos => [...prevTodos, addedTodo]);
+    setTitle('');
+    setCompleted('');
+    setIsToAddTodo(false);  
+  };
+
+  const handleUpdateTodo = (todoToUpdate) => {
+    let todoToUpdateId;
+    todos.map((todo, index) => {
+        if(todoToUpdate.id === todo.id) {
+          todoToUpdateId = index;
+        }
+      });
+      setToUpdateTodoId(todoToUpdateId);
     };
-  
-   
-    const cancel = () => {
-      setIsToAddTodo(false);
-      setToUpdateTodoId('');
-      setSearchTodosBy('');
-      setToSearchId('');
-      setTitle('');
+
+  const updateTodo = (todo) => {
+    const updatedTodo = { 
+        "userId": todo.userId,
+        "id": parseInt(todo.id),
+        "title": title,
+        "completed": todo.completed
     };
+    console.log("uss", updatedTodo.completed);
+
+    fetch(`http://localhost:3000/todos/${todo.id}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedTodo),
+    })
+    .then(response => response.json())
+    .catch(error => console.error('Error:', error));
+
+    setTodos(prevTodos => prevTodos.map((prevTodo) => 
+        prevTodo.id === updatedTodo.id ? updatedTodo : prevTodo
+    ));
+    //setToUpdateTodoId('');
+    setTitle('');
+  };
+
+  
+  const cancel = () => {
+    setIsToAddTodo(false);
+    setToUpdateTodoId('');
+    setSearchTodosBy('');
+    setToSearchId('');
+    setTitle('');
+  };
 
   const getAndSetNextTodoId = () => {
     fetch("http://localhost:3000/nextID", {
@@ -188,8 +171,7 @@ const Todos = () => {
   const compareAlphabetical = (a, b) => {
     if (a.title < b.title) {
       return -1;
-    }
-    if (a.title > b.title) {
+    }if (a.title > b.title) {
       return 1;
     }
     return 0;
@@ -198,8 +180,7 @@ const Todos = () => {
   const compareSerially = (a, b) => {
     if (a.id < b.id) {
       return -1;
-    }
-    if (a.id > b.id) {
+    }if (a.id > b.id) {
       return 1;
     }
     return 0;
@@ -208,8 +189,7 @@ const Todos = () => {
   const compareCompletion = (a, b) => {
     if (a.completed < b.completed) {
       return -1;
-    }
-    if (a.completed > b.completed) {
+    }if (a.completed > b.completed) {
       return 1;
     }
     return 0;

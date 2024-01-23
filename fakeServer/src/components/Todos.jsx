@@ -4,6 +4,7 @@ import { UserContext } from '../contexts/UserProvider';
 
 const Todos = () => {
   const { userId } = useParams();
+  const { userId } = useParams();
 
   const [todos, setTodos] = useState('');
   //const [isDone, setIsDone] = useState(false);
@@ -29,8 +30,10 @@ const Todos = () => {
 
   //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
   const { user } = useContext(UserContext);
+  //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+  const { user} = useContext(UserContext);
 
-    useEffect(()=>{
+  useEffect(()=>{
 
   fetch(`http://localhost:3000/todos?userId=${user.id}`)
   .then(response => response.json())

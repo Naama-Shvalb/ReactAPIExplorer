@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const Photos = () => {
+
     const location = useLocation();
     const { album } = location.state;
 
@@ -12,17 +13,6 @@ const Photos = () => {
     const [title, setTitle] = useState('');
     const [isToAddPhoto, setIsToAddPhoto] = useState('');
     const [photoToUpdateId, setPhotoToUpdateId] = useState('');
-
-    // async function getUserPhotos() {
-    //     const response = await fetch(`http://localhost:3000/albums/${id}/photos?_start=${start}&_limit=${limit}`)
-    //         .catch(error => {
-    //             console.log("Error:", error);
-    //         });
-    //     const json_response = await response.json();
-    //     if (json_response.length >= 1) {
-    //         setUserPhotos([...json_response])
-    //     }
-    // }
 
     useEffect(() => {
         fetch(`http://localhost:3000/photos?albumId=${album.id}&_limit=10`)
@@ -116,10 +106,10 @@ const Photos = () => {
     };
 
     const displayMorePhotos = () =>{
-        const photoArrayList=photos.length;
+        const photoArrayList = photos.length;
         fetch(`http://localhost:3000/photos?albumId=${album.id}&_start=${photoArrayList}&_end=${photoArrayList+10}`)
         .then(response => response.json())
-        .then(json => setPhotos(prevPhotos=>[...prevPhotos,json]));
+        .then(json => setPhotos(prevPhotos => [...prevPhotos].concat(json)));
     };
 
     return (

@@ -77,7 +77,6 @@ const Comments = () => {
     const sendToUpdateComment = (commentToUpdate) => {
         let copyUpdate = [];
         comments.map((comment, i) => {
-            // postToUpdate.id == post.id ? copyUpdate[post.id] = true : copyUpdate[post.id] = false;
             commentToUpdate.id == comment.id ? copyUpdate[i] = true : copyUpdate[i] = false;
         });
         setUpdateComment(copyUpdate);
@@ -143,9 +142,6 @@ const Comments = () => {
             .then((response) => response.json())
             .then((json) => console.log(json));
     };
-
-    // https://dev.to/collegewap/react-fetch-example-getpostputdelete-with-api-3l00
-
 
     return (
         <>

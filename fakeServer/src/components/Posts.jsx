@@ -19,7 +19,6 @@ const Posts = () => {
   const [toSearchTitle, setToSearchTitle] = useState('');
   const [searchPostsdBy, setSearchPostsBy] = useState('');
 
-  //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
   const { user } = useContext(UserContext);
 
   useEffect(() => {

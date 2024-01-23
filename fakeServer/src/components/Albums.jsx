@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { UserContext } from '../contexts/UserProvider';
 
 const Albums = () => {
@@ -13,7 +13,6 @@ const Albums = () => {
     const [searchAlbumsdBy, setSearchAlbumsBy] = useState('');  
 
     const { user } = useContext(UserContext);
-    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`http://localhost:3000/albums?userId=${user.id}`)

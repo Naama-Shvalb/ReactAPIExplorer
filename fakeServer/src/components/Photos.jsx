@@ -5,8 +5,13 @@ const Photos = () => {
     const location = useLocation();
     const { album } = location.state;
 
-    const [photos, setPhotos] = useState('');
-    const [isToDeletePhoto, setIsToDeletePhoto] = useState(false);
+    const [photos, setPhotos] = useState([]);
+    const [photoId, setPhotoId] = useState('');
+    const [thumbnailUrl, setThumbnailUrl] = useState('');
+    const [url, setUrl] = useState('');
+    const [title, setTitle] = useState('');
+    const [isToAddPhoto, setIsToAddPhoto] = useState('');
+    const [photoToUpdateId, setPhotoToUpdateId] = useState('')
 
     // async function getUserPhotos() {
     //     const response = await fetch(`http://localhost:3000/albums/${id}/photos?_start=${start}&_limit=${limit}`)
@@ -25,6 +30,12 @@ const Photos = () => {
             .then(json => setPhotos(json))
     }, [])
 
+    useEffect(()=>{
+        setThumbnailUrl('');
+        setTitle('');
+        setUrl('');
+    }, [photoToUpdateId, isToAddPhoto])
+
     const deletePhoto = (photoIdToDelete) => {
         fetch(`http://localhost:3000/photos/${photoIdToDelete}`, {
             method: "DELETE",
@@ -34,24 +45,131 @@ const Photos = () => {
         setPhotos(prevPhotos => prevPhotos.filter(photo => { return photo.id !== photoIdToDelete; }));
     }
 
-    const updatePhoto = () => {
-
+    const updatePhoto = (photoToUpdateObj) => {
+        if (url == '')
+            setUrl(photoToUpdateObj.url);
+        if (thumbnailUrl == '')
+            setThumbnailUrl(photoToUpdateObj.thumbnailUrl);
+        console.log(photoToUpdateObj);
+        console.log(photoToUpdateId);
+        fetch(`http://localhost:3000/photos/${photoToUpdateId}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+                "thumbnailUrl": thumbnailUrl,
+                "url": url,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+        const updatedPhoto={
+            albumId:photoToUpdateObj.albumId,
+            id:photoToUpdateObj.id,
+            title:photoToUpdateObj.title,
+            thumbnailUrl: thumbnailUrl,
+            url: url,
+        }
+        setPhotos((prevPhotos) =>
+            prevPhotos.map((photo) => photo.id === photoToUpdateId ? updatedPhoto : photo));
+        setPhotoToUpdateId('');
     }
 
-    if (photos == '')
-        return (
-            <></>
-        )
+
+    const addPhoto = () => {
+        getAndSetNextPostId();
+        updateNextPostId();
+
+        const addedPhoto = { "albumId": album.id, "id": photoId, "title": title, "url": url, "thumbnailUrl": thumbnailUrl }
+        fetch('http://localhost:3000/photos', {
+            method: 'POST',
+            body: JSON.stringify(addedPhoto),
+        })
+            .then(response => response.json())
+            .catch(error => console.error('Error:', error));
+        setPhotos(prevPhotos => [...prevPhotos, addedPhoto]);
+        setIsToAddPhoto(false);
+    }
+
+    const getAndSetNextPostId = () => {
+        fetch("http://localhost:3000/nextID", {
+            method: 'GET'
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(json);
+                setPhotoId(json[0].nextPhotoId);
+            });
+    };
+
+    const updateNextPostId = () => {
+        fetch("http://localhost:3000/nextID/1", {
+            method: "PATCH",
+            body: JSON.stringify({
+                "nextPhotoId": photoId + 1
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+    };
+
     return (
         <>
+            <h3>album id: {album.id}, album title: {album.title}</h3>
             <h1>Photos</h1>
             {photos.map((photo, i) => (
                 <span key={i}>
                     <img src={`${photo.thumbnailUrl}`} width="150" height="150" />
                     <button onClick={() => deletePhoto(photo.id)}>delete photo</button>
-                    <button onClick={() => updatePhoto(photo.id)}>update photo</button>
+                    {photoToUpdateId == photo.id ?
+                        <>
+                            <input
+                                type="text"
+                                placeholder="thumbnailUrl"
+                                value={thumbnailUrl}
+                                onChange={(e) => setThumbnailUrl(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                placeholder="url"
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)}
+                            />
+                            <button onClick={() => updatePhoto(photo)}>update</button>
+                            <button onClick={()=>setPhotoToUpdateId('')}>cancel</button>
+                        </>
+                        : <button onClick={() => setPhotoToUpdateId(photo.id)}>update photo</button>}
                 </span>
             ))}
+            <br />
+            {isToAddPhoto ? <>
+                <input
+                    type="text"
+                    placeholder="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="url"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="thumbnailUrl"
+                    value={thumbnailUrl}
+                    onChange={(e) => setThumbnailUrl(e.target.value)}
+                />
+                <button onClick={addPhoto}>add</button>
+                <button onClick={()=>setIsToAddPhoto(false)}>cancel</button>
+            </>
+                : <button onClick={() => setIsToAddPhoto(true)}>add photo</button>
+            }
         </>
     )
 }

@@ -3,50 +3,78 @@ import { useParams } from 'react-router-dom';
 import {UserContext} from '../contexts/UserProvider';
 
 const Todos = () => {
-    const { userId } = useParams();
+  const { userId } = useParams();
 
-    const [todos, setTodos] = useState('');
-    //const [isDone, setIsDone] = useState(false);
-    const [title, setTitle] = useState('');
-    const [copleted, setComplited] = useState('');
-    const [forceRender, setForseRender] = useState(false);
-    const [todoId, setTodoId] = useState('');
-    const [isToAddTodo, setIsToAddTodo] = useState('');
-    const [toUpdateTodoId, setToUpdateTodoId] = useState('');
-    const [isToSearchTodo, setIsToSearchTodo] = useState(false);
+  const [todos, setTodos] = useState('');
+  //const [isDone, setIsDone] = useState(false);
+  const [title, setTitle] = useState('');
+  const [completed, setCompleted] = useState('');
+  const [forceRender, setForseRender] = useState(false);
+  const [todoId, setTodoId] = useState('');
+  const [isToAddTodo, setIsToAddTodo] = useState('');
+  const [toUpdateTodoId, setToUpdateTodoId] = useState('');
+  const [toSearchId, setToSearchId] = useState('');
+  const [toSearchTitle, setToSearchTitle] = useState('');
+  const [toSearchState, setToSearchState] = useState('');
+  const [searchTodosdBy, setSearchTodosBy] = useState('');
 
-    //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
-    const { user} = useContext(UserContext);
+  //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+  const { user} = useContext(UserContext);
 
-    useEffect(()=>{
+  useEffect(()=>{
 
-    fetch(`http://localhost:3000/todos?userId=${user.id}`)
-    .then(response => response.json())
-    .then(json => {setTodos(json);});
-    }, []);
+  fetch(`http://localhost:3000/todos?userId=${user.id}`)
+  .then(response => response.json())
+  .then(json => {setTodos(json);});
+  }, []);
 
-    if(!todos){
-        return <></>;
-    }
+  if(!todos){
+      return <></>;
+  }
 
-    const handleCheckboxChange = (e, todo) => {
-        console.log("checked:", e.target.checked);        
-        // if (e.target.checked) {
-        //     setIsDone(true);
-        // }
-        // else{
-        // setIsDone(false);
-        // }
-        todo.completed = e.target.checked;
-        updateTodo(todo);
-       
+  todos.map((todo) => (
+      todo.id = parseInt(todo.id)
+  ));
+
+
+  const handleCheckboxChange = (e, todo) => {
+    console.log("checked:", e.target.checked);        
+    //setCompleted(false);
+    fetch(`http://localhost:3000/todos/${todo.id}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+                "completed": e.target.checked
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => console.log(json));
+
+    setTodos(prevTodos => prevTodos.map((prevTodo) => {
+        if(prevTodo.id === todo.id){
+          prevTodo.completed = e.target.checked;
+        }
+        return (prevTodo);
+      }));
+      
     };
 
-     const searchTodos = (propertytype, property) => {
-      fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
-      .then(response => response.json())
-      .then(json => {setTodos(json);});
-     };
+    const searchTodos = (propertytype, property) => {
+      console.log("prr", propertytype, property);
+      if (property === '' || property === undefined) {
+        fetch(`http://localhost:3000/todos?userId=${user.id}`)
+            .then(response => response.json())
+            .then(json => setTodos(json));
+      } else {
+        fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
+            .then(response => response.json())
+            .then(json => setTodos(json));
+      }
+    console.log("ttt", todos);
+      
+    };
 
     const deleteTodo = (todoId) => {
       fetch(`http://localhost:3000/todos/${todoId}`, {
@@ -58,14 +86,13 @@ const Todos = () => {
     };
    
     const addNewTodo = () => {
-
       getAndSetNextTodoId();
       updateNextTodoId();
-      // const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
-      const addedTodo = { "id": todoId, 
+      const addedTodo = {  
       "userId": user.id, 
+      "id": parseInt(todoId),
       "title": title, 
-      "completed": copleted }; 
+      "completed": completed }; 
       fetch('http://localhost:3000/todos', {
         method: 'POST',
         body: JSON.stringify(addedTodo),
@@ -75,6 +102,7 @@ const Todos = () => {
   
       setTodos(prevTodos => [...prevTodos, addedTodo]);
       setTitle('');
+      setCompleted('');
       setIsToAddTodo(false);  
     };
 
@@ -84,17 +112,18 @@ const Todos = () => {
           if(todoToUpdate.id === todo.id) {
             todoToUpdateId = index;
           }
-      });
-      setToUpdateTodoId(todoToUpdateId);
-    };
+        });
+        setToUpdateTodoId(todoToUpdateId);
+      };
 
     const updateTodo = (todo) => {
       const updatedTodo = { 
           "userId": todo.userId,
-          "id": todo.id,
+          "id": parseInt(todo.id),
           "title": title,
           "completed": todo.completed
       };
+      console.log("uss", updatedTodo.completed);
   
       fetch(`http://localhost:3000/todos/${todo.id}`, {
           method: "PUT",
@@ -106,13 +135,16 @@ const Todos = () => {
       setTodos(prevTodos => prevTodos.map((prevTodo) => 
           prevTodo.id === updatedTodo.id ? updatedTodo : prevTodo
       ));
-      setToUpdateTodoId('');
-  };
+      //setToUpdateTodoId('');
+      setTitle('');
+    };
   
    
     const cancel = () => {
       setIsToAddTodo(false);
       setToUpdateTodoId('');
+      setSearchTodosBy('');
+      setToSearchId('');
       setTitle('');
     };
 
@@ -190,7 +222,6 @@ const Todos = () => {
         setTodos(currentTodos);
         setForseRender(!forceRender);
         console.log("todos usestate after:", todos);
-
     };
 
   
@@ -200,7 +231,45 @@ const Todos = () => {
         <div>
             <div>
               <h2>Search Todos</h2>
-              <button onClick={()=>searchTodos('id', )}>search by numer:</button>
+              {searchTodosdBy ==='id' ?
+                <>
+                <input
+                    type="number"
+                    placeholder="id"
+                    value={toSearchId}
+                    onChange={(e) => setToSearchId(e.target.value)}
+                />
+                <button onClick={() => searchTodos(searchTodosdBy, toSearchId)}>search</button>
+                <button onClick={() => { cancel(); }}>cancel</button><br />
+                </>
+                :searchTodosdBy === 'title'?
+                  <>
+                  <input
+                      type="text"
+                      placeholder="title"
+                      value={toSearchTitle}
+                      onChange={(e) => setToSearchTitle(e.target.value)}
+                  />
+                  <button onClick={() => searchTodos(searchTodosdBy, toSearchTitle)}>search</button>
+                  <button onClick={() => { cancel(); }}>cancel</button><br />
+                  </>
+                  :searchTodosdBy === 'completed'?
+                  <>
+                  <input
+                      type="text"
+                      placeholder="is complited?"
+                      value={toSearchState}
+                      onChange={(e) => setToSearchState(e.target.value)}
+                  />
+                  <button onClick={() => searchTodos(searchTodosdBy, toSearchState == 'true')}>search</button>
+                  <button onClick={() => { cancel(); }}>cancel</button><br />
+                  </>
+                  :<>
+                  <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
+                  <button onClick={()=>setSearchTodosBy('title')}>search by title:</button>
+                  <button onClick={()=>setSearchTodosBy('completed')}>search by state:</button>
+                  </>
+              }
             </div>
 
             <div>
@@ -211,9 +280,13 @@ const Todos = () => {
                 <button onClick={()=>handleSelectTodos('random')}>Show in random order</button>
             </div>
             {todos.map((todo, index) => (
-                <div key={index}>
-                    <p>{index}.  {todo.title}
-                     <input type="checkbox" defaultChecked={todo.completed} value={copleted} onChange={()=>{handleCheckboxChange(event, todo);}}/>
+                <div key={todo.id}>
+                    <p>{todo.id}.  {todo.title}
+                     <input 
+                      type="checkbox" 
+                      defaultChecked={todo.completed}
+                      value={completed} onChange={()=>{handleCheckboxChange(event, todo);}}
+                      />
                     </p>
                     {/*comment.email == currentUser.email &&*/ <>
                         <button onClick={() => deleteTodo(todo.id)}>delete todo</button>
@@ -241,7 +314,13 @@ const Todos = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
-            <button onClick={() => addNewTodo(todoId)}>add</button>
+            <input
+                type="text"
+                placeholder="is complited?"
+                value={completed}
+                onChange={(e) => setCompleted(e.target.value)}
+            />
+            <button onClick={() => addNewTodo()}>add</button>
             <button onClick={() => { cancel(); }}>cancel</button><br />
             </>
             : <button onClick={() => setIsToAddTodo(true)}>add comment</button>

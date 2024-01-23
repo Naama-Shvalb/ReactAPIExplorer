@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
-import React, { useState} from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Navigate, useNavigate} from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { User , Address, Company, Geo} from '../User';
+import {UserContext} from '../contexts/UserProvider';
+
 import './SignUpLogin.css';
 
-const FinishRegister = ({userName, password})=>{
+const FinishRegister = ({userName})=>{
 
     const [userId, setUserId] = useState('');
     const [name, setName] = useState('');
@@ -23,6 +25,8 @@ const FinishRegister = ({userName, password})=>{
     const [isLoggedInUser, setisLoggedInUser] = useState(false);
 
     const navigate = useNavigate();
+    const { user, setCurrentUser } = useContext(UserContext);
+
     
     const handleFinisRegister = ()=> {
 
@@ -43,7 +47,7 @@ const FinishRegister = ({userName, password})=>{
           .then(json => console.log(json))
           .catch(error => console.error('Error:', error));
         
-        loginUser(newUser);
+        loginUser();
     };
 
     const getAndSetNextUserId = () => {
@@ -71,8 +75,10 @@ const FinishRegister = ({userName, password})=>{
             .then((json) => console.log(json));
     };
 
-    const loginUser = (user) => {
-      localStorage.setItem('activeUser', JSON.stringify(user));
+    const loginUser = () => {
+      setCurrentUser(user);
+      // localStorage.setItem('activeUser', JSON.stringify(user.username));
+      setCurrentUser(user);
       setisLoggedInUser(true);
     };
 

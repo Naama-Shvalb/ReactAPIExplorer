@@ -1,29 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useContext} from 'react';
 import { Navigate, json, useNavigate } from 'react-router-dom';
 import './SignUpLogin.css';
 import Register from './Register';
 import Home from './Home';
+import {UserContext} from '../contexts/UserProvider';
 
 
 const Login = () => {
-  const [name, setName] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState('');
+  //const [user, setUser] = useState('');
   const [isLoggedInUser, setIsLoggedInUser] = useState(false);
   const [toRegister, setToRegister] = useState(false);
+
+  const { user, setCurrentUser } = useContext(UserContext);
 
   console.log('user:', user);
   console.log('user id:',  user.id);
 
   const handleLogin = () => {
-    if (name == '') {
+    if (userName == '') {
       alert("Enter name and password");
       return;
     }
-    fetch(`http://localhost:3000/users?username=${name}`)
+    fetch(`http://localhost:3000/users?username=${userName}`)
       .then(response => response.json())
       .then(jsonUser => {
-        setUser(jsonUser[0]);
+        setCurrentUser(jsonUser[0]);
       });
   };
 
@@ -33,13 +36,14 @@ const Login = () => {
   
   const localstorageAndLogin = () => {
     if (user != '' && password == user.website) {
-      localStorage.setItem('activeUser', JSON.stringify(user));
+      setCurrentUser(user);
+      //localStorage.setItem('activeUser', JSON.stringify(user.username));
       setIsLoggedInUser(true);
     }
-    else if (name != '') {
+    else if (userName != '') {
       alert('try again or register');
     }
-    setName('');
+    setUserName('');
     //setUser('');
     setPassword('');
   };
@@ -55,9 +59,9 @@ const Login = () => {
           <h2>insert user</h2>
           <input
             type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="User Name"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
           />
           <input
             type="password"

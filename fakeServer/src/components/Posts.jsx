@@ -91,8 +91,13 @@ const Posts = () => {
 
   const postUpdate = (postToUpdate) => {
     const updatedPost = { "uesrId": currentUser.id, "id": postToUpdate.id, "title": postToUpdate.title, "body": body };
-
-    // fetch- upddate post
+    
+    fetch(`http://localhost:3000/posts/${postToUpdate.id}`, {
+      method: "PUT",
+      body: JSON.stringify(updatedPost ),
+    })
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error));
 
     setPosts(prevPosts => prevPosts.map((post) => {
       return post.id == postToUpdate.id ? updatedPost : post;

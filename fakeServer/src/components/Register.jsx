@@ -34,7 +34,7 @@ const Register = () => {
         console.log("username and pass from register", username, password);
         // Navigate to the '/finish-register' route with props in the URL
         navigate('/finishRegister', {
-          state: { userName: username, password: password }
+          state: { userName: username}
         });
       };
       if (isRegistered) {

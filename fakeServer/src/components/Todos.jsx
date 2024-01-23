@@ -1,6 +1,6 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { useParams } from 'react-router-dom';
-
+import {UserContext} from '../contexts/UserProvider';
 
 const Todos = () => {
     const { userId } = useParams();
@@ -12,13 +12,15 @@ const Todos = () => {
     const [forceRender, setForseRender] = useState(false);
     const [todoId, setTodoId] = useState('');
     const [isToAddTodo, setIsToAddTodo] = useState('');
-    const [isToUpdateTodo, setIsToUpdateTodo] = useState('');//array
+    const [toUpdateTodoId, setToUpdateTodoId] = useState('');
+    const [isToSearchTodo, setIsToSearchTodo] = useState(false);
 
-    const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+    //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
+    const { user} = useContext(UserContext);
 
     useEffect(()=>{
 
-    fetch(`http://localhost:3000/todos?userId=${currentUser.id}`)
+    fetch(`http://localhost:3000/todos?userId=${user.id}`)
     .then(response => response.json())
     .then(json => {setTodos(json);});
     }, []);
@@ -61,7 +63,7 @@ const Todos = () => {
       updateNextTodoId();
       // const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
       const addedTodo = { "id": todoId, 
-      "userId": currentUser.id, 
+      "userId": user.id, 
       "title": title, 
       "completed": copleted }; 
       fetch('http://localhost:3000/todos', {
@@ -76,40 +78,42 @@ const Todos = () => {
       setIsToAddTodo(false);  
     };
 
-    const sendToUpdateTodo = (todoToUpdate) => {
-      let copyUpdate = [];
-      todos.map((comment, i) => {
-          // postToUpdate.id == post.id ? copyUpdate[post.id] = true : copyUpdate[post.id] = false;
-          todoToUpdate.id == comment.id ? copyUpdate[i] = true : copyUpdate[i] = false;
+    const handleUpdateTodo = (todoToUpdate) => {
+      let todoToUpdateId;
+      todos.map((todo, index) => {
+          if(todoToUpdate.id === todo.id) {
+            todoToUpdateId = index;
+          }
       });
-      setIsToUpdateTodo(copyUpdate);
+      setToUpdateTodoId(todoToUpdateId);
     };
 
     const updateTodo = (todo) => {
       const updatedTodo = { 
-      "userId": todo.userId,
-      "id": todo.id,
-      "title": todo.title,
-      "completed": todo.completed };
-
+          "userId": todo.userId,
+          "id": todo.id,
+          "title": title,
+          "completed": todo.completed
+      };
+  
       fetch(`http://localhost:3000/todos/${todo.id}`, {
-        method: "PUT",
-        body: JSON.stringify(updatedTodo ),
+          method: "PUT",
+          body: JSON.stringify(updatedTodo),
       })
-        .then(response => response.json())
-        .catch(error => console.error('Error:', error));
-
-        console.log("second before", updatedTodo);
-        setTodos(prevTodos => prevTodos.map((todo) => {
-          return todo.id == updatedTodo.id ? updatedTodo : todo;  }));
-        setIsToUpdateTodo(false);
-    };
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error));
+  
+      setTodos(prevTodos => prevTodos.map((prevTodo) => 
+          prevTodo.id === updatedTodo.id ? updatedTodo : prevTodo
+      ));
+      setToUpdateTodoId('');
+  };
+  
    
     const cancel = () => {
       setIsToAddTodo(false);
-      setIsToUpdateTodo(false);
+      setToUpdateTodoId('');
       setTitle('');
-      //setBody('');
     };
 
     const getAndSetNextTodoId = () => {
@@ -213,7 +217,7 @@ const Todos = () => {
                     </p>
                     {/*comment.email == currentUser.email &&*/ <>
                         <button onClick={() => deleteTodo(todo.id)}>delete todo</button>
-                        {isToUpdateTodo[index] ? 
+                        {toUpdateTodoId===index ? 
                         <>
                             <input
                                 type="text"
@@ -224,7 +228,7 @@ const Todos = () => {
                             <button onClick={() => { updateTodo(todo); }}>update</button>
                             <button onClick={() => { cancel(); }}>cancel</button>
                         </>
-                            : <button onClick={() => sendToUpdateTodo(todo)}>update todo</button>
+                            : <button onClick={() => handleUpdateTodo(todo)}>update todo</button>
                         }
                     </>}
                 </div>

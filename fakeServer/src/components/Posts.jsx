@@ -46,11 +46,13 @@ const Posts = () => {
     if (property === '' || property === undefined) {
       fetch(`http://localhost:3000/posts?userId=${user.id}`)
           .then(response => response.json())
-          .then(json => setPosts(json));
+          .then(json => setPosts(json))
+          .then(setSearchPostsBy('finished'));
     } else {
       fetch(`http://localhost:3000/posts?${propertytype}=${property}`)
           .then(response => response.json())
-          .then(json => setPosts(json));
+          .then(json => setPosts(json))
+          .then(setSearchPostsBy('finished'));
     }
   };
 
@@ -133,8 +135,20 @@ const Posts = () => {
     setToSearchId('');
     setTitle('');
     setBody('');
-
+    setToSearchId('');
   };
+
+
+  const cancelSearch = () => {
+    setSearchPostsBy('');
+    setToSearchId('');
+    setTitle('');
+    setToSearchId('');
+    fetch(`http://localhost:3000/posts?userId=${user.id}`)
+    .then(response => response.json())
+    .then(json => setPosts(json));
+  };
+
 
   if (posts == undefined) {
     return <></>;
@@ -165,6 +179,11 @@ const Posts = () => {
             />
             <button onClick={() => searchPosts(searchPostsdBy, toSearchTitle)}>search</button>
             <button onClick={() => { cancel(); }}>cancel</button><br />
+            </>
+            :searchPostsdBy ==='finished' ?
+            <>
+            <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
+
             </>
             :<>
             <button onClick={()=>setSearchPostsBy('id')}>search by id:</button>

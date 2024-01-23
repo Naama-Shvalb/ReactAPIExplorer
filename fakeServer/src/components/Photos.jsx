@@ -25,7 +25,7 @@ const Photos = () => {
     // }
 
     useEffect(() => {
-        fetch(`http://localhost:3000/photos?albumId=${album.id}`)
+        fetch(`http://localhost:3000/photos?albumId=${album.id}&_limit=10`)
             .then(response => response.json())
             .then(json => setPhotos(json));
         fetch("http://localhost:3000/nextID", {
@@ -70,22 +70,14 @@ const Photos = () => {
         })
             .then((response) => response.json())
             .then((json) => console.log(json));
-        const updatedPhoto = {
-            albumId: photoToUpdateObj.albumId,
-            id: photoToUpdateObj.id,
-            title: photoToUpdateObj.title,
-            thumbnailUrl: thumbnailUrl,
-            url: url,
-        }
+        const updatedPhoto = {albumId: photoToUpdateObj.albumId, id: photoToUpdateObj.id, title: photoToUpdateObj.title, thumbnailUrl: thumbnailUrl, url: url}
         setPhotos((prevPhotos) =>
             prevPhotos.map((photo) => photo.id === photoToUpdateId ? updatedPhoto : photo));
         setPhotoToUpdateId('');
     }
 
-
     const addPhoto = () => {
         updateNextPostId();
-
         const addedPhoto = { "albumId": album.id, "id": `${photoId}`, "title": title, "url": url, "thumbnailUrl": thumbnailUrl }
         fetch('http://localhost:3000/photos', {
             method: 'POST',
@@ -123,6 +115,13 @@ const Photos = () => {
             .then((json) => console.log(json));
     };
 
+    const displayMorePhotos = () =>{
+        const photoArrayList=photos.length;
+        fetch(`http://localhost:3000/photos?albumId=${album.id}&_start=${photoArrayList}&_end=${photoArrayList+10}`)
+        .then(response => response.json())
+        .then(json => setPhotos(prevPhotos=>[...prevPhotos,json]));
+    }
+
     return (
         <>
             <h3>album id: {album.id}, album title: {album.title}</h3>
@@ -152,6 +151,7 @@ const Photos = () => {
                 </span>
             ))}
             <br />
+            <button onClick={displayMorePhotos}>more photos</button>
             {isToAddPhoto ? <>
                 <input
                     type="text"

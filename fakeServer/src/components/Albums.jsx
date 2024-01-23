@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Albums = () => {
 
@@ -77,9 +77,7 @@ const Albums = () => {
             <label></label>
             {albums.map((album, index) => (
                 <div key={index}>
-                    <p>id: {album.id}, title: {album.title}</p><br />
-                    {/* <button onClick={() => displayPhotosFunc(album)}>open album</button> */}
-                    <button onClick={() => navigate(`${album.id}/photos`, { state: { album: album } })}>open album</button>
+                    <Link to={`${album.id}/photos`} state={{ album: album }}>id: {album.id}, title: {album.title}</Link>
                 </div>
             ))}
             {isToAddAlbum ?

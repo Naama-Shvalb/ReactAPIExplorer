@@ -1,10 +1,19 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import {UserContext} from '../contexts/UserProvider';
+import { UserContext } from '../contexts/UserProvider';
 
 const Todos = () => {
   const { userId } = useParams();
 
+  const [todos, setTodos] = useState('');
+  //const [isDone, setIsDone] = useState(false);
+  const [title, setTitle] = useState('');
+  const [copleted, setComplited] = useState('');
+  const [forceRender, setForseRender] = useState(false);
+  const [todoId, setTodoId] = useState('');
+  const [isToAddTodo, setIsToAddTodo] = useState('');
+  const [toUpdateTodoId, setToUpdateTodoId] = useState('');
+  const [isToSearchTodo, setIsToSearchTodo] = useState(false);
   const [todos, setTodos] = useState('');
   //const [isDone, setIsDone] = useState(false);
   const [title, setTitle] = useState('');
@@ -19,9 +28,9 @@ const Todos = () => {
   const [searchTodosdBy, setSearchTodosBy] = useState('');
 
   //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
-  const { user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
-  useEffect(()=>{
+    useEffect(()=>{
 
   fetch(`http://localhost:3000/todos?userId=${user.id}`)
   .then(response => response.json())
@@ -76,11 +85,11 @@ const Todos = () => {
       
     };
 
-    const deleteTodo = (todoId) => {
-      fetch(`http://localhost:3000/todos/${todoId}`, {
-        method: "DELETE",
-      })
-        .then(response => response.json());
+  const deleteTodo = (todoId) => {
+    fetch(`http://localhost:3000/todos/${todoId}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json());
 
       setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; }));
     };
@@ -148,76 +157,76 @@ const Todos = () => {
       setTitle('');
     };
 
-    const getAndSetNextTodoId = () => {
-      fetch("http://localhost:3000/nextID", {
-          method: 'GET'
-      })
-        .then((response) => response.json())
-        .then((json) => {
-            console.log(json);
-            setTodoId(json[0].nextTodoId);
-        });
-    };
-  
-    const updateNextTodoId = () => {
-      fetch("http://localhost:3000/nextID/1", {
-              method: "PATCH",
-              body: JSON.stringify({
-                  "nextTodoId": todoId + 1
-              }),
-              headers: {
-                  "Content-type": "application/json; charset=UTF-8",
-              },
-          })
-              .then((response) => response.json())
-              .then((json) => console.log(json));
-    };
+  const getAndSetNextTodoId = () => {
+    fetch("http://localhost:3000/nextID", {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        setTodoId(json[0].nextTodoId);
+      });
+  };
 
-    const compareAlphabetical = ( a, b ) => {
-        if ( a.title < b.title ){
-          return -1;
-        }
-        if ( a.title > b.title ){
-          return 1;
-        }
-        return 0;
-      };
+  const updateNextTodoId = () => {
+    fetch("http://localhost:3000/nextID/1", {
+      method: "PATCH",
+      body: JSON.stringify({
+        "nextTodoId": todoId + 1
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json));
+  };
 
-    const compareSerially = ( a, b ) => {
-      if ( a.id < b.id ){
-        return -1;
-      }
-      if ( a.id > b.id ){
-        return 1;
-      }
-      return 0;
-    };
+  const compareAlphabetical = (a, b) => {
+    if (a.title < b.title) {
+      return -1;
+    }
+    if (a.title > b.title) {
+      return 1;
+    }
+    return 0;
+  };
 
-    const compareCompletion = ( a, b ) => {
-      if ( a.completed < b.completed ){
-        return -1;
-      }
-      if ( a.completed > b.completed ){
-        return 1;
-      }
-      return 0;
-    };
-        
-    const handleSelectTodos = (selectType) => {
-        const currentTodos = todos;
-        if(selectType === 'alphabetical'){
-            currentTodos.sort(compareAlphabetical);
-        }
-        else if(selectType === 'serially'){
-            currentTodos.sort(compareSerially);
-        }
-        else if(selectType === 'random'){
-            currentTodos.sort((a, b) => 0.5 - Math.random());
-        }
-        else if(selectType === 'completion'){
-            currentTodos.sort(compareCompletion);
-        }
-        console.log("todos usestate:", todos);
+  const compareSerially = (a, b) => {
+    if (a.id < b.id) {
+      return -1;
+    }
+    if (a.id > b.id) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const compareCompletion = (a, b) => {
+    if (a.completed < b.completed) {
+      return -1;
+    }
+    if (a.completed > b.completed) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const handleSelectTodos = (selectType) => {
+    const currentTodos = todos;
+    if (selectType === 'alphabetical') {
+      currentTodos.sort(compareAlphabetical);
+    }
+    else if (selectType === 'serially') {
+      currentTodos.sort(compareSerially);
+    }
+    else if (selectType === 'random') {
+      currentTodos.sort((a, b) => 0.5 - Math.random());
+    }
+    else if (selectType === 'completion') {
+      currentTodos.sort(compareCompletion);
+    }
+    console.log("todos usestate:", todos);
 
         setTodos(currentTodos);
         setForseRender(!forceRender);
@@ -309,10 +318,10 @@ const Todos = () => {
             {isToAddTodo ?
             <>
             <input
-                type="text"
-                placeholder="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+              type="text"
+              placeholder="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
             <input
                 type="text"
@@ -322,13 +331,13 @@ const Todos = () => {
             />
             <button onClick={() => addNewTodo()}>add</button>
             <button onClick={() => { cancel(); }}>cancel</button><br />
-            </>
-            : <button onClick={() => setIsToAddTodo(true)}>add comment</button>
-            }
-        </div>
-        </>
+          </>
+          : <button onClick={() => setIsToAddTodo(true)}>add comment</button>
+        }
+      </div>
+    </>
 
-    );
+  );
 };
 
 export default Todos;

@@ -11,7 +11,7 @@ import Info from './components/Info';
 import FinishRegister from './components/FinishRegister';
 import Comments from './components/Comments';
 import Photos from './components/Photos';
- 
+
 
 function App() {
 
@@ -33,7 +33,7 @@ function App() {
               <Route path="info" element={<Info />} />
               <Route path='todos' element={<Todos />} />
               <Route path="posts" element={<Posts />} >
-                <Route path="comments" element={<Comments />}/>
+                <Route path=":podtId/comments" element={<Comments />} />
               </Route>
               <Route path="albums" element={<Albums />} />
               <Route path='albums/:albumId/photos' element={<Photos />} />

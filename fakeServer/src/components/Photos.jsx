@@ -25,12 +25,20 @@ const Photos = () => {
     // }
 
     useEffect(() => {
-        fetch(`http://localhost:3000/photos?albumId=${album.id}`)
+        fetch(`http://localhost:3000/photos?albumId=${album.id}&_limit=10`)
             .then(response => response.json())
-            .then(json => setPhotos(json))
+            .then(json => setPhotos(json));
+        fetch("http://localhost:3000/nextID", {
+            method: 'GET'
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(json);
+                setPhotoId(json[0].nextPhotoId);
+            });
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         setThumbnailUrl('');
         setTitle('');
         setUrl('');
@@ -50,8 +58,6 @@ const Photos = () => {
             setUrl(photoToUpdateObj.url);
         if (thumbnailUrl == '')
             setThumbnailUrl(photoToUpdateObj.thumbnailUrl);
-        console.log(photoToUpdateObj);
-        console.log(photoToUpdateId);
         fetch(`http://localhost:3000/photos/${photoToUpdateId}`, {
             method: "PATCH",
             body: JSON.stringify({
@@ -64,24 +70,15 @@ const Photos = () => {
         })
             .then((response) => response.json())
             .then((json) => console.log(json));
-        const updatedPhoto={
-            albumId:photoToUpdateObj.albumId,
-            id:photoToUpdateObj.id,
-            title:photoToUpdateObj.title,
-            thumbnailUrl: thumbnailUrl,
-            url: url,
-        }
+        const updatedPhoto = {albumId: photoToUpdateObj.albumId, id: photoToUpdateObj.id, title: photoToUpdateObj.title, thumbnailUrl: thumbnailUrl, url: url}
         setPhotos((prevPhotos) =>
             prevPhotos.map((photo) => photo.id === photoToUpdateId ? updatedPhoto : photo));
         setPhotoToUpdateId('');
     }
 
-
     const addPhoto = () => {
-        getAndSetNextPostId();
         updateNextPostId();
-
-        const addedPhoto = { "albumId": album.id, "id": photoId, "title": title, "url": url, "thumbnailUrl": thumbnailUrl }
+        const addedPhoto = { "albumId": album.id, "id": `${photoId}`, "title": title, "url": url, "thumbnailUrl": thumbnailUrl }
         fetch('http://localhost:3000/photos', {
             method: 'POST',
             body: JSON.stringify(addedPhoto),
@@ -90,6 +87,7 @@ const Photos = () => {
             .catch(error => console.error('Error:', error));
         setPhotos(prevPhotos => [...prevPhotos, addedPhoto]);
         setIsToAddPhoto(false);
+        getAndSetNextPostId();
     }
 
     const getAndSetNextPostId = () => {
@@ -117,6 +115,13 @@ const Photos = () => {
             .then((json) => console.log(json));
     };
 
+    const displayMorePhotos = () =>{
+        const photoArrayList=photos.length;
+        fetch(`http://localhost:3000/photos?albumId=${album.id}&_start=${photoArrayList}&_end=${photoArrayList+10}`)
+        .then(response => response.json())
+        .then(json => setPhotos(prevPhotos=>[...prevPhotos,json]));
+    }
+
     return (
         <>
             <h3>album id: {album.id}, album title: {album.title}</h3>
@@ -140,12 +145,13 @@ const Photos = () => {
                                 onChange={(e) => setUrl(e.target.value)}
                             />
                             <button onClick={() => updatePhoto(photo)}>update</button>
-                            <button onClick={()=>setPhotoToUpdateId('')}>cancel</button>
+                            <button onClick={() => setPhotoToUpdateId('')}>cancel</button>
                         </>
                         : <button onClick={() => setPhotoToUpdateId(photo.id)}>update photo</button>}
                 </span>
             ))}
             <br />
+            <button onClick={displayMorePhotos}>more photos</button>
             {isToAddPhoto ? <>
                 <input
                     type="text"
@@ -166,7 +172,7 @@ const Photos = () => {
                     onChange={(e) => setThumbnailUrl(e.target.value)}
                 />
                 <button onClick={addPhoto}>add</button>
-                <button onClick={()=>setIsToAddPhoto(false)}>cancel</button>
+                <button onClick={() => setIsToAddPhoto(false)}>cancel</button>
             </>
                 : <button onClick={() => setIsToAddPhoto(true)}>add photo</button>
             }

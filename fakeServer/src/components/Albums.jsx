@@ -14,14 +14,21 @@ const Albums = () => {
     useEffect(() => {
         fetch(`http://localhost:3000/albums?userId=${currentUser.id}`)
             .then(response => response.json())
-            .then(json => setAlbums(json))
+            .then(json => setAlbums(json));
+        fetch("http://localhost:3000/nextID", {
+            method: 'GET'
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(json);
+                setAlbumId(json[0].nextAlbumId);
+            });
     }, [])
 
     const addAlbum = () => {
-        getAndSetNextPostId();
         updateNextPostId();
 
-        const addedAlbum = { "userId": currentUser.id, "id": albumId, "title": title }
+        const addedAlbum = { "userId": currentUser.id, "id": `${albumId}`, "title": title }
         fetch('http://localhost:3000/albums', {
             method: 'POST',
             body: JSON.stringify(addedAlbum),
@@ -31,6 +38,7 @@ const Albums = () => {
         setAlbums(prevAlbums => [...prevAlbums, addedAlbum]);
         setTitle('');
         setIsToAddAlbum(false);
+        getAndSetNextPostId();
     }
 
     const cancel = () => {

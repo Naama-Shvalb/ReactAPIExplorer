@@ -39,11 +39,7 @@ const Posts = () => {
   const getMoreDetails = (displayedPost) => {
     setCurrentPost(displayedPost);
     SetDisplayComments(false);
-    let copyDetail = [];
-    posts.map((post, i) => {
-      displayedPost.id == post.id ? copyDetail[i] = true : copyDetail[i] = false;
-    });
-    setDisplayDetails(copyDetail);
+    setDisplayDetails(displayedPost.id);
   };
 
   const searchPosts = (propertytype, property) => {

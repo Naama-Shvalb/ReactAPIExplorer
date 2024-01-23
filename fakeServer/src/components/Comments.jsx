@@ -74,14 +74,6 @@ const Comments = () => {
         setComments(prevComments => prevComments.filter(comment => { return comment.id !== deleteCommentId; }));
     };
 
-    const sendToUpdateComment = (commentToUpdate) => {
-        let copyUpdate = [];
-        comments.map((comment, i) => {
-            commentToUpdate.id == comment.id ? copyUpdate[i] = true : copyUpdate[i] = false;
-        });
-        setUpdateComment(copyUpdate);
-    };
-
     const updateCommentFunc = (updateCommentObj) => {
         console.log(updateCommentObj.id);
         fetch(`http://localhost:3000/comments/${updateCommentObj.id}`, {
@@ -114,7 +106,7 @@ const Comments = () => {
         setIsToAddComment(false);
         setBody('');
         setName('');
-        setUpdateComment(false);
+        setUpdateComment('');
     };
 
     const getAndSetNextPostId = () => {
@@ -195,7 +187,7 @@ const Comments = () => {
                                     <button onClick={() => { updateCommentFunc(comment); }}>update</button>
                                     <button onClick={() => { cancel(); }}>cancel</button>
                                 </>
-                                    : <button onClick={() => sendToUpdateComment(comment)}>update comment</button>
+                                    : <button onClick={() => setUpdateComment(comment.id)}>update comment</button>
                                 }
                             </>}
                         </div>);

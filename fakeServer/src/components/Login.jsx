@@ -19,14 +19,17 @@ const Login = () => {
   console.log('user id:',  user.id);
 
   const handleLogin = () => {
-    if (userName == '') {
+    if (userName == ''||password=='') {
       alert("Enter name and password");
       return;
     }
-    fetch(`http://localhost:3000/users?username=${userName}`)
+    fetch(`http://localhost:3000/users?username=${userName}&website=${password}`)
       .then(response => response.json())
       .then(jsonUser => {
-        setCurrentUser(jsonUser[0]);
+        if(jsonUser.length!==0)
+          setCurrentUser(jsonUser[0])
+        else
+          alert('please try again or register.')
       });
   };
 

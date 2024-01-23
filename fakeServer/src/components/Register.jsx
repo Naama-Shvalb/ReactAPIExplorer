@@ -6,7 +6,7 @@ import './SignUpLogin.css';
 const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [validatePassword, setValidatePassword] = useState('');
+    const [verifyPassword, setVerifyPassword] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
 
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Register = () => {
             alert('You are an existing user. Please log in.');
             setPassword('');
           } else {
-            if(validatePassword == password){
+            if(verifyPassword == password){
               setIsRegistered(true);            
             }
             else{
@@ -66,9 +66,9 @@ const Register = () => {
             />
             <input
               type="password"
-              placeholder="Validate Password"
-              value={validatePassword}
-              onChange={(e) => setValidatePassword(e.target.value)}
+              placeholder="Verify Password"
+              value={verifyPassword}
+              onChange={(e) => setVerifyPassword(e.target.value)}
             />
             <button className='signUpBtn' onClick={handleRegister}>Register</button>
             <button className='loginBtn' onClick= {handleLoginClick}>login</button>

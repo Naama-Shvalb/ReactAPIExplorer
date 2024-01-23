@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const Comments = () => {
-    const location=useLocation();
-    const {post, currentUser} =location.state;
+    const location = useLocation();
+    const {post, currentUser} = location.state;
     const [commentId, setCommentsId] = useState('');
     const [comments, setComments] = useState([]);
     const [isToAddComment, setIsToAddComment] = useState(false);
@@ -38,7 +38,6 @@ const Comments = () => {
     };
 
     const deleteComment = (deleteCommentId) => {
-        // fetch delete comment
         fetch(`http://localhost:3000/comments/${deleteCommentId}`, {
             method: "DELETE",
           })

@@ -6,7 +6,7 @@ const Todos = () => {
     const { userId } = useParams();
 
     const [todos, setTodos] = useState('');
-    const [isDone, setIsDone] = useState(false);
+    //const [isDone, setIsDone] = useState(false);
     const [title, setTitle] = useState('');
     const [copleted, setComplited] = useState('');
     const [forceRender, setForseRender] = useState(false);
@@ -40,6 +40,12 @@ const Todos = () => {
        
     };
 
+     const searchTodos = (propertytype, property) => {
+      fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
+      .then(response => response.json())
+      .then(json => {setTodos(json);});
+     };
+
     const deleteTodo = (todoId) => {
       fetch(`http://localhost:3000/todos/${todoId}`, {
         method: "DELETE",
@@ -50,7 +56,7 @@ const Todos = () => {
     };
    
     const addNewTodo = () => {
-      
+
       getAndSetNextTodoId();
       updateNextTodoId();
       // const ID = (posts == undefined || posts == '') ? 1 : parseInt(posts[posts.length - 1].id) + 1;
@@ -189,6 +195,11 @@ const Todos = () => {
         <h1>Todos</h1>
         <div>
             <div>
+              <h2>Search Todos</h2>
+              <button onClick={()=>searchTodos('id', )}>search by numer:</button>
+            </div>
+
+            <div>
                 <h2>Select todos for user {userId}:</h2>
                 <button onClick={()=>handleSelectTodos('serially')} >Show serially</button>
                 <button onClick={()=>handleSelectTodos('alphabetical')}>View in alphabetical order</button>
@@ -198,7 +209,7 @@ const Todos = () => {
             {todos.map((todo, index) => (
                 <div key={index}>
                     <p>{index}.  {todo.title}
-                     <input type="checkbox" defaultChecked={todo.completed} value={isDone} onChange={()=>{handleCheckboxChange(event, todo);}}/>
+                     <input type="checkbox" defaultChecked={todo.completed} value={copleted} onChange={()=>{handleCheckboxChange(event, todo);}}/>
                     </p>
                     {/*comment.email == currentUser.email &&*/ <>
                         <button onClick={() => deleteTodo(todo.id)}>delete todo</button>

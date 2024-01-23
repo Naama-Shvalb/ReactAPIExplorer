@@ -39,6 +39,7 @@ function App() {
               <Route path='albums/:albumId/photos' element={<Photos />} />
             </Route>
           </Route>
+          <Route path="/" element={<Login />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="finishRegister" element={<FinishRegister />} />

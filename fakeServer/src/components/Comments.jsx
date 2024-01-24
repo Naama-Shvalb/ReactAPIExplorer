@@ -72,13 +72,13 @@ const Comments = () => {
         fetch(`http://localhost:3000/comments/${deleteCommentId}`, {
             method: "DELETE",
         })
-            .then(response => response.json());
+            .then(response => response.json())
+            .catch(error => console.error('Error:', error));
 
         setComments(prevComments => prevComments.filter(comment => { return comment.id !== deleteCommentId; }));
     };
 
     const updateCommentFunc = (updateCommentObj) => {
-        console.log(updateCommentObj.id);
         fetch(`http://localhost:3000/comments/${updateCommentObj.id}`, {
             method: "PATCH",
             body: JSON.stringify({
@@ -89,7 +89,6 @@ const Comments = () => {
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
 
         const updatedComment = {
             "postId": updateCommentObj.postId,
@@ -128,13 +127,11 @@ const Comments = () => {
         })
             .then((response) => response.json())
             .then((json) => {
-                console.log(json[0].nextCommentId);
                 setCommentId(json[0].nextCommentId);
             });
     };
 
     const updateNextPostId = () => {
-        console.log(commentId);
         fetch("http://localhost:3000/nextID/1", {
             method: "PATCH",
             body: JSON.stringify({
@@ -145,7 +142,6 @@ const Comments = () => {
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
     };
 
     return (

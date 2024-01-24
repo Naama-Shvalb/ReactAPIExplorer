@@ -2,12 +2,9 @@ import React, { useState, useParams, useContext} from 'react';
 import { Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import {UserContext} from '../contexts/UserProvider';
-import './SignUpLogin.css';
 import '../styles/Global.css';
 
 const Home = () => {
-
-    //const currentUser = JSON.parse(localStorage.getItem("activeUser"));
     const { user } = useContext(UserContext);
     const navigate = useNavigate(); 
 

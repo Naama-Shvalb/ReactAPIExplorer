@@ -1,4 +1,3 @@
-/* Global styles */
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f8f9fa;
@@ -95,14 +94,6 @@ body {
 
 .item:hover {
   transform: translateY(-5px);
-}
-
-.item-content {
-  /* Styles for the content of each item */
-}
-
-.item-actions {
-  /* Styles for the actions associated with each item */
 }
 
 .home-buttons {

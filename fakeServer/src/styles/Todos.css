@@ -1,17 +1,14 @@
-/* Container styles */
 .todos-container {
     max-width: 800px;
     margin: auto;
     padding: 20px;
   }
   
-  /* Heading styles */
   .todos-heading {
     font-size: 24px;
     margin-bottom: 20px;
   }
   
-  /* Search section styles */
   .search-section {
     margin-bottom: 20px;
   }
@@ -29,7 +26,6 @@
     cursor: pointer;
   }
   
-  /* Select section styles */
   .select-section {
     margin-bottom: 20px;
   }
@@ -43,7 +39,6 @@
     margin-right: 10px;
   }
   
-  /* Todo styles */
   .todo-item {
     margin-bottom: 10px;
   }
@@ -67,7 +62,6 @@
     cursor: pointer;
   }
   
-  /* Add todo styles */
   .add-todo-section {
     margin-top: 20px;
   }

@@ -4,9 +4,8 @@ import '../styles/Global.css';
 import '../styles/Info.css';
 
 const Info = () => {
-    const { user, setCurrentUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
-    //const currentUser = JSON.parse(localStorage.getItem("activeUser"));   
     return (
         <>
         <div className="info-container">

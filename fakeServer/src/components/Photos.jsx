@@ -26,7 +26,6 @@ const Photos = () => {
         })
             .then((response) => response.json())
             .then((json) => {
-                console.log(json);
                 setPhotoId(json[0].nextPhotoId);
             });
     }, []);
@@ -41,7 +40,9 @@ const Photos = () => {
         fetch(`http://localhost:3000/photos/${photoIdToDelete}`, {
             method: "DELETE",
         })
-            .then(response => response.json());
+            .then(response => response.json())
+            .catch(error => console.error('Error:', error));
+
 
         setPhotos(prevPhotos => prevPhotos.filter(photo => { return photo.id !== photoIdToDelete; }));
         if(photo.length==0)
@@ -64,7 +65,6 @@ const Photos = () => {
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
         const updatedPhoto = {
             albumId: photoToUpdateObj.albumId,
             id: photoToUpdateObj.id,
@@ -97,7 +97,6 @@ const Photos = () => {
         })
             .then((response) => response.json())
             .then((json) => {
-                console.log(json);
                 setPhotoId(json[0].nextPhotoId);
             });
     };
@@ -113,7 +112,6 @@ const Photos = () => {
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
     };
 
     const displayMorePhotos = () => {

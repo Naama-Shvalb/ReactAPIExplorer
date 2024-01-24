@@ -28,7 +28,6 @@ const Todos = () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         setTodoId(json[0].nextTodoId);
       });
     }, []);
@@ -43,8 +42,6 @@ const Todos = () => {
 
 
   const handleCheckboxChange = (e, todo) => {
-    console.log("checked:", e.target.checked);        
-    //setCompleted(false);
     fetch(`http://localhost:3000/todos/${todo.id}`, {
             method: "PATCH",
             body: JSON.stringify({
@@ -55,7 +52,6 @@ const Todos = () => {
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
 
     setTodos(prevTodos => prevTodos.map((prevTodo) => {
         if(prevTodo.id === todo.id){
@@ -67,7 +63,6 @@ const Todos = () => {
   };
 
   const searchTodos = (propertytype, property) => {
-    console.log("prr", propertytype, property);
     if (property === '' || property === undefined) {
       fetch(`http://localhost:3000/todos?userId=${user.id}`)
           .then(response => response.json())
@@ -86,7 +81,8 @@ const Todos = () => {
     fetch(`http://localhost:3000/todos/${todoId}`, {
       method: "DELETE",
     })
-      .then(response => response.json());
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error));
 
       setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; }));
     };
@@ -119,7 +115,6 @@ const Todos = () => {
         "title": title,
         "completed": todo.completed
     };
-    console.log(todo.id);
 
     fetch(`http://localhost:3000/todos/${todo.id}`, {
         method: "PATCH",
@@ -163,7 +158,6 @@ const Todos = () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         setTodoId(json[0].nextTodoId);
       });
   };
@@ -179,7 +173,6 @@ const Todos = () => {
       },
     })
       .then((response) => response.json())
-      .then((json) => console.log(json));
   };
 
   const compareAlphabetical = (a, b) => {
@@ -223,11 +216,8 @@ const Todos = () => {
     else if (selectType === 'completion') {
       currentTodos.sort(compareCompletion);
     }
-    console.log("todos usestate:", todos);
-
         setTodos(currentTodos);
         setForseRender(!forceRender);
-        console.log("todos usestate after:", todos);
     };
 
   

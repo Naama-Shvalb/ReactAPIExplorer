@@ -2,12 +2,11 @@ import { useState, useEffect, useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserProvider';
 import '../styles/Global.css';
-import './posts.css';
+import '../styles/Posts.css';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [postId, setPostId] = useState('');
-  const [currentPost, setCurrentPost] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [isToAddPost, setIsToAddPost] = useState(false);
@@ -30,14 +29,12 @@ const Posts = () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         setPostId(json[0].nextPostId);
       });
   }, []);
 
 
   const getMoreDetails = (displayedPost) => {
-    setCurrentPost(displayedPost);
     SetDisplayComments(false);
     let copyDisplayclass=[];
     posts.map((post,i)=>{copyDisplayclass[i] = post.id==displayedPost.id?"display":"false"})
@@ -60,11 +57,12 @@ const Posts = () => {
   };
 
   const deletePost = (deletePostId) => {
-    //fetch- delete post
     fetch(`http://localhost:3000/posts/${deletePostId}`, {
       method: "DELETE",
     })
-      .then(response => response.json());
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error));
+
 
     setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
   };
@@ -75,7 +73,6 @@ const Posts = () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         setPostId(json[0].nextPostId);
       });
   };
@@ -91,7 +88,6 @@ const Posts = () => {
       },
     })
       .then((response) => response.json())
-      .then((json) => console.log(json));
   };
 
   const addNewPost = () => {

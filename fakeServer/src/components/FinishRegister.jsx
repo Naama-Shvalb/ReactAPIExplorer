@@ -1,11 +1,8 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useContext } from 'react';
-import { Navigate, useNavigate} from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Navigate} from 'react-router-dom';
 import { User , Address, Company, Geo} from '../User';
 import {UserContext} from '../contexts/UserProvider';
-
-import './SignUpLogin.css';
+import '../styles/RegisterAndLogin.css';
 
 const FinishRegister = ({userName})=>{
 
@@ -24,7 +21,6 @@ const FinishRegister = ({userName})=>{
     const [bs, setBs] = useState('');
     const [isLoggedInUser, setisLoggedInUser] = useState(false);
 
-    const navigate = useNavigate();
     const { user, setCurrentUser } = useContext(UserContext);
 
     
@@ -37,14 +33,12 @@ const FinishRegister = ({userName})=>{
         const adress = new Address(street, suite, city, zipcode, geo);
         const company = new Company(companyName, catchPhrase, bs);
         const newUser = new User(userId, name, userName, email, adress, phone, '', company);
-        console.log("new user", newUser);
         
         fetch('http://localhost:3000/users', {
           method: 'POST',
           body: JSON.stringify(newUser),
         })
           .then(response => response.json())
-          .then(json => console.log(json))
           .catch(error => console.error('Error:', error));
         
         loginUser();
@@ -56,7 +50,6 @@ const FinishRegister = ({userName})=>{
       })
         .then((response) => response.json())
         .then((json) => {
-            console.log(json);
             setUserId(json[0].nextUserId);
         });
     };
@@ -72,12 +65,10 @@ const FinishRegister = ({userName})=>{
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
     };
 
     const loginUser = () => {
       setCurrentUser(user);
-      // localStorage.setItem('activeUser', JSON.stringify(user.username));
       setCurrentUser(user);
       setisLoggedInUser(true);
     };

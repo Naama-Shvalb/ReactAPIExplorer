@@ -1,22 +1,16 @@
 import React, { useEffect, useState ,useContext} from 'react';
-import { Navigate, json, useNavigate } from 'react-router-dom';
-import './SignUpLogin.css';
-import Register from './Register';
-import Home from './Home';
+import { Navigate } from 'react-router-dom';
+import '../styles/RegisterAndLogin.css';
 import {UserContext} from '../contexts/UserProvider';
 
 
 const Login = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  //const [user, setUser] = useState('');
   const [isLoggedInUser, setIsLoggedInUser] = useState(false);
   const [toRegister, setToRegister] = useState(false);
 
   const { user, setCurrentUser } = useContext(UserContext);
-
-  console.log('user:', user);
-  console.log('user id:',  user.id);
 
   const handleLogin = () => {
     if (userName == ''||password=='') {
@@ -40,14 +34,12 @@ const Login = () => {
   const localstorageAndLogin = () => {
     if (user != '' && password == user.website) {
       setCurrentUser(user);
-      //localStorage.setItem('activeUser', JSON.stringify(user.username));
       setIsLoggedInUser(true);
     }
     else if (userName != '') {
       alert('try again or register');
     }
     setUserName('');
-    //setUser('');
     setPassword('');
   };
   

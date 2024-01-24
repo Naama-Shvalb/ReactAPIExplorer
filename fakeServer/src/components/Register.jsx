@@ -1,7 +1,6 @@
 import React, { useState, useEffect} from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import Login from './Login';
-import './SignUpLogin.css';
+import { useNavigate } from 'react-router-dom';
+import '../styles/RegisterAndLogin.css';
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -34,7 +33,6 @@ const Register = () => {
     useEffect(() => {
 
       const navigateToFinishRegister = () => {
-        console.log("username and pass from register", username, password);
         navigate('/finishRegister', {
           state: { userName: username}
         });

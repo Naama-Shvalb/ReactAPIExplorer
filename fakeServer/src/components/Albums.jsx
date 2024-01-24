@@ -25,15 +25,17 @@ const Albums = () => {
         })
             .then((response) => response.json())
             .then((json) => {
-                console.log(json);
                 setAlbumId(json[0].nextAlbumId);
             });
     }, []);
 
     const addAlbum = () => {
         updateNextPostId();
-
-        const addedAlbum = { "userId": `${user.id}`, "id": `${albumId}`, "title": title };
+        const addedAlbum = {
+            "userId": `${user.id}`,
+             "id": `${albumId}`, 
+             "title": title 
+            };
         fetch('http://localhost:3000/albums', {
             method: 'POST',
             body: JSON.stringify(addedAlbum),
@@ -69,7 +71,6 @@ const Albums = () => {
         })
             .then((response) => response.json())
             .then((json) => {
-                console.log(json);
                 setAlbumId(json[0].nextAlbumId);
             });
     };
@@ -85,7 +86,6 @@ const Albums = () => {
             },
         })
             .then((response) => response.json())
-            .then((json) => console.log(json));
     };
 
     return (

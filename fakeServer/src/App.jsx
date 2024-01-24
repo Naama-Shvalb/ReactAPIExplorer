@@ -1,6 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css';
-// import UserContext from './UserContext'; // Import your UserContext
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
@@ -14,15 +13,6 @@ import Photos from './components/Photos';
 
 
 function App() {
-
-  // const { userId } = useParams();
-
-  // const [loggedInUserId, setLoggedInUserId] = useState(null);
-
-  // const handleLogin = (username) => {
-  //   setLoggedInUserId(username);
-  // };
-
 
   return (
     <>

@@ -33,7 +33,7 @@ const Comments = () => {
     const addNewComment = async (postId) => {
         updateNextPostId();
         const addedComment = { 
-            "postId": postId, 
+            "postId": `${postId}`, 
             "id": `${commentId}`, 
             "name": name, 
             "email": user.email, 
@@ -178,7 +178,7 @@ const Comments = () => {
                                     <br />body: {comment.body}</p>
                                 {comment.email == user.email && <>
                                     <button onClick={() => deleteComment(comment.id)}>delete comment</button>
-                                    {updateComment[i] ? <>
+                                    {updateComment==comment.id ? <>
                                         <input
                                             type="text"
                                             placeholder="body"

@@ -70,13 +70,13 @@ const Photos = () => {
             thumbnailUrl: thumbnailUrl, 
             url: url};
         setPhotos((prevPhotos) =>
-            prevPhotos.map((photo) => photo.id === photoToUpdateId ? updatedPhoto : photo));
+            prevPhotos.map((photo) => {return photo.id === photoToUpdateId ? updatedPhoto : photo}));
         setPhotoToUpdateId('');
     };
 
     const addPhoto = () => {
         updateNextPostId();
-        const addedPhoto = { "albumId": album.id, "id": `${photoId}`, "title": title, "url": url, "thumbnailUrl": thumbnailUrl };
+        const addedPhoto = { "albumId": `${album.id}`, "id": `${photoId}`, "title": title, "url": url, "thumbnailUrl": thumbnailUrl };
         fetch('http://localhost:3000/photos', {
             method: 'POST',
             body: JSON.stringify(addedPhoto),
@@ -131,10 +131,8 @@ const Photos = () => {
                     <img src={`${photo.thumbnailUrl}`}/>
                     <div className="button-container">
                         <button onClick={() => deletePhoto(photo.id)}>delete</button>
-                        
-                        {isToUpdate ?
-                            <>
-                            { photoToUpdateId === photo.id &&(
+                     
+                            { photoToUpdateId === photo.id?(
                                 <>
                                 <input
                                     type="text"
@@ -148,16 +146,10 @@ const Photos = () => {
                                     value={url}
                                     onChange={(e) => setUrl(e.target.value)}
                                 />
-                                <button onClick={() => updatePhoto()}>send</button>
-                                
+                                <button onClick={() => updatePhoto(photo)}>send</button>
                                 </>
-                           
-                            )}
-                            </>
-                            :<button onClick={() => {setIsToUpdate(true);
-                                setPhotoToUpdateId(photo.id);}}>update</button>
-                            
-                        }
+                            )
+                            :<button onClick={() => {setPhotoToUpdateId(photo.id);}}>update</button>}
                         <button onClick={() => setPhotoToUpdateId('')}>cancel</button>
                     </div>
                 </div>

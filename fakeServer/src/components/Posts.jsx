@@ -45,14 +45,14 @@ const Posts = () => {
   const searchPosts = (propertytype, property) => {
     if (property === '' || property === undefined) {
       fetch(`http://localhost:3000/posts?userId=${user.id}`)
-          .then(response => response.json())
-          .then(json => setPosts(json))
-          .then(setSearchPostsBy('finished'));
+        .then(response => response.json())
+        .then(json => setPosts(json))
+        .then(setSearchPostsBy('finished'));
     } else {
       fetch(`http://localhost:3000/posts?${propertytype}=${property}`)
-          .then(response => response.json())
-          .then(json => setPosts(json))
-          .then(setSearchPostsBy('finished'));
+        .then(response => response.json())
+        .then(json => setPosts(json))
+        .then(setSearchPostsBy('finished'));
     }
   };
 
@@ -93,11 +93,12 @@ const Posts = () => {
 
   const addNewPost = () => {
     updateNextPostId();
-    const addedPost = { 
-      "id": postId, 
-      "userId": `${user.id}`, 
-      "title": title, 
-      "body": body };
+    const addedPost = {
+      "id": `${postId}`,
+      "userId": `${user.id}`,
+      "title": title,
+      "body": body
+    };
     fetch('http://localhost:3000/posts', {
       method: 'POST',
       body: JSON.stringify(addedPost),
@@ -112,17 +113,32 @@ const Posts = () => {
     getAndSetNextPostId();
   };
 
-  const updatePost = (postToUpdate) => {
-    const updatedPost = { 
-      "uesrId": user.id, 
-      "id": postToUpdate.id, 
-      "title": postToUpdate.title, 
-      "body": body };
+  const updatePost = (postToUpdateObj) => {
+    if(body=='')
+      setBody(postToUpdateObj.body);
+    if(title=='')
+      setTitle(postToUpdateObj.title);
+    const updatedPost = {
+      "uesrId" : user.id,
+      "id":`${postToUpdateObj.id}`,
+      "title": title,
+      "body": body
+    };
 
-    // fetch- upddate post
+    fetch(`http://localhost:3000/posts/${postToUpdateObj.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        "body":body,
+        "title":title,
+      }),      
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+  })
+      .then((response) => response.json())
 
     setPosts(prevPosts => prevPosts.map((post) => {
-      return post.id == postToUpdate.id ? updatedPost : post;
+      return post.id == postToUpdateObj.id ? updatedPost : post;
     }));
     setBody('');
     setIsToUpdatePost(false);
@@ -145,8 +161,8 @@ const Posts = () => {
     setTitle('');
     setToSearchId('');
     fetch(`http://localhost:3000/posts?userId=${user.id}`)
-    .then(response => response.json())
-    .then(json => setPosts(json));
+      .then(response => response.json())
+      .then(json => setPosts(json));
   };
 
 
@@ -155,109 +171,111 @@ const Posts = () => {
   }
   return (
     <>
-    <div className="container">
-      <h1 className="heading">Posts</h1>
-      <div className="section search-section">
-        <h2>Search Posts</h2>
-        {searchPostsdBy ==='id' ?
-          <>
-          <input
-              type="number"
-              placeholder="id"
-              value={toSearchId}
-              onChange={(e) => setToSearchId(e.target.value)}
-          />
-          <button onClick={() => searchPosts(searchPostsdBy, toSearchId)}>search</button>
-          <button onClick={() => { cancel(); }}>cancel</button><br />
-          </>
-          :searchPostsdBy === 'title'?
+      <div className="container">
+        <h1 className="heading">Posts</h1>
+        <div className="section search-section">
+          <h2>Search Posts</h2>
+          {searchPostsdBy === 'id' ?
             <>
-            <input
-                type="text"
-                placeholder="title"
-                value={toSearchTitle}
-                onChange={(e) => setToSearchTitle(e.target.value)}
-            />
-            <button onClick={() => searchPosts(searchPostsdBy, toSearchTitle)}>search</button>
-            <button onClick={() => { cancel(); }}>cancel</button><br />
+              <input
+                type="number"
+                placeholder="id"
+                value={toSearchId}
+                onChange={(e) => setToSearchId(e.target.value)}
+              />
+              <button onClick={() => searchPosts(searchPostsdBy, toSearchId)}>search</button>
+              <button onClick={() => { cancel(); }}>cancel</button><br />
             </>
-            :searchPostsdBy ==='finished' ?
-            <>
-            <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
+            : searchPostsdBy === 'title' ?
+              <>
+                <input
+                  type="text"
+                  placeholder="title"
+                  value={toSearchTitle}
+                  onChange={(e) => setToSearchTitle(e.target.value)}
+                />
+                <button onClick={() => searchPosts(searchPostsdBy, toSearchTitle)}>search</button>
+                <button onClick={() => { cancel(); }}>cancel</button><br />
+              </>
+              : searchPostsdBy === 'finished' ?
+                <>
+                  <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
 
-            </>
-            :<>
-            <button onClick={()=>setSearchPostsBy('id')}>search by id:</button>
-            <button onClick={()=>setSearchPostsBy('title')}>search by title:</button>
-            </>
-        }
-      </div>
-      {posts.map((post, index) => (
-        <div className={`${displayDetails[post.id]}`} key={index}>
-          <div className="item-content">
-            <p>id: {post.id} title: {post.title}</p>
-          </div>
-            {displayDetails[index] ?
+                </>
+                : <>
+                  <button onClick={() => setSearchPostsBy('id')}>search by id:</button>
+                  <button onClick={() => setSearchPostsBy('title')}>search by title:</button>
+                </>
+          }
+        </div>
+        {posts.map((post, index) => (
+          <div className={`${displayDetails[post.id]}`} key={index}>
+            <div className="item-content">
+              <p><strong>id:</strong> {post.id} <strong>title:</strong> {post.title}</p>
+            </div>
+            {displayDetails == post.id ?
               <>
                 <p className="item-content">body: {post.body}</p>
-            
-              <div className="actions item-actions">
-                {isToUpdatePost ?
-                  <>
-                    <br />
-                    <input
-                      type="text"
-                      placeholder="body"
-                      value={body}
-                      onChange={(e) => setBody(e.target.value)}
-                    />
-                    <button onClick={() => updatePost(post)}>update</button>
-                    <button onClick={() => cancel()}>cancel</button><br />
+
+                <div className="actions item-actions">
+                  {isToUpdatePost ?
+                    <>
+                      <br />
+                      <input
+                        type="text"
+                        placeholder="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="body"
+                        value={body}
+                        onChange={(e) => setBody(e.target.value)}
+                      />
+                      <button onClick={() => updatePost(post)}>update</button>
+                      <button onClick={() => cancel()}>cancel</button><br />
+                    </>
+                    : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
+                  }
+                  <button onClick={() => deletePost(post.id)}>delete post</button>
+                </div>
+                {!displayComments ?
+                  <button onClick={() => SetDisplayComments(true)} >show all comments</button>
+                  :
+                  <><Navigate to={`${post.id}/comments`} state={{ post: post }} />
+                    <Outlet />
                   </>
-                  : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
+
                 }
-                <button onClick={() => deletePost(post.id)}>delete post</button>
-              </div>
-              {!displayComments ?
-                <button onClick={() => SetDisplayComments(true)} >show all comments</button>
-                // <button onClick={() => {SetDisplayComments(true); return(<Navigate to={"comments"} state={{ currentPost: currentPost, currentUser: currentUser }} />);}}>
-                //   show all comments
-                // </button>
 
-                :
-                <><Navigate to={`${post.id}/comments`} state={{ post: post}} />
-                  <Outlet />
-                </>
-
-              }
-
-            </>
-            : <button onClick={() => getMoreDetails(post)}>open post</button>   
+              </>
+              : <button onClick={() => getMoreDetails(post)}>open post</button>
             }
-            
+
+          </div>
+        ))}
+        <div className="section add-section">
+          {isToAddPost ? <>
+            <input
+              type="text"
+              placeholder="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="body"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+            />
+            <button onClick={addNewPost}>add</button>
+            <button onClick={() => { cancel(); }}>cancel</button>
+          </>
+            : <button onClick={() => setIsToAddPost(true)}>add post</button>
+          }
         </div>
-      ))}
-      <div className="section add-section">
-        {isToAddPost ? <>
-          <input
-            type="text"
-            placeholder="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="body"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-          />
-          <button onClick={addNewPost}>add</button>
-          <button onClick={() => { cancel(); }}>cancel</button>
-        </>
-          : <button onClick={() => setIsToAddPost(true)}>add post</button>
-        }
       </div>
-    </div>
     </>
   );
 };

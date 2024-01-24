@@ -33,7 +33,7 @@ const Albums = () => {
     const addAlbum = () => {
         updateNextPostId();
 
-        const addedAlbum = { "userId": user.id, "id": `${albumId}`, "title": title };
+        const addedAlbum = { "userId": `${user.id}`, "id": `${albumId}`, "title": title };
         fetch('http://localhost:3000/albums', {
             method: 'POST',
             body: JSON.stringify(addedAlbum),

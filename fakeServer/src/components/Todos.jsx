@@ -23,6 +23,14 @@ const Todos = () => {
     fetch(`http://localhost:3000/todos?userId=${user.id}`)
     .then(response => response.json())
     .then(json => {setTodos(json);});
+    fetch("http://localhost:3000/nextID", {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        setTodoId(json[0].nextTodoId);
+      });
     }, []);
 
   if(!todos){
@@ -82,11 +90,10 @@ const Todos = () => {
     };
    
   const addNewTodo = () => {
-    getAndSetNextTodoId();
     updateNextTodoId();
     const addedTodo = {  
-    "userId": user.id, 
-    "id": parseInt(todoId),
+    "userId": `${user.id}`, 
+    "id": `${todoId}`,
     "title": title, 
     "completed": completed }; 
     fetch('http://localhost:3000/todos', {
@@ -100,38 +107,31 @@ const Todos = () => {
     setTitle('');
     setCompleted('');
     setIsToAddTodo(false);  
+    getAndSetNextTodoId();
   };
-
-  const handleUpdateTodo = (todoToUpdate) => {
-    let todoToUpdateId;
-    todos.map((todo, index) => {
-        if(todoToUpdate.id === todo.id) {
-          todoToUpdateId = index;
-        }
-      });
-      setToUpdateTodoId(todoToUpdateId);
-    };
 
   const updateTodo = (todo) => {
     const updatedTodo = { 
-        "userId": todo.userId,
-        "id": parseInt(todo.id),
+        "userId": `${todo.userI}`,
+        "id": `${todo.id}`,
         "title": title,
         "completed": todo.completed
     };
-    console.log("uss", updatedTodo.completed);
+    console.log(todo.id);
 
     fetch(`http://localhost:3000/todos/${todo.id}`, {
-        method: "PUT",
-        body: JSON.stringify(updatedTodo),
+        method: "PATCH",
+        body: JSON.stringify({
+          "title":title,
+        }),
     })
     .then(response => response.json())
     .catch(error => console.error('Error:', error));
 
-    setTodos(prevTodos => prevTodos.map((prevTodo) => 
-        prevTodo.id === updatedTodo.id ? updatedTodo : prevTodo
-    ));
-    //setToUpdateTodoId('');
+    setTodos(prevTodos => prevTodos.map((prevTodo) => {
+       return prevTodo.id === todo.id ? updatedTodo : prevTodo
+    }));
+    setToUpdateTodoId('');
     setTitle('');
   };
 
@@ -287,7 +287,7 @@ const Todos = () => {
                   { <>
                     <div className="actions item-actions">
                       <button onClick={() => deleteTodo(todo.id)}>delete todo</button>
-                      {toUpdateTodoId === index ? 
+                      {toUpdateTodoId === todo.id ? 
                       <>
                           <input
                               type="text"
@@ -298,7 +298,7 @@ const Todos = () => {
                           <button onClick={() => { updateTodo(todo); }}>update</button>
                           <button onClick={() => { cancel(); }}>cancel</button>
                       </>
-                          : <button onClick={() => handleUpdateTodo(todo)}>update todo</button>
+                          : <button onClick={() => setToUpdateTodoId(todo.id)}>update todo</button>
                       }
                     </div>
                   </>}
@@ -322,7 +322,7 @@ const Todos = () => {
           <button onClick={() => addNewTodo()}>add</button>
           <button onClick={() => { cancel(); }}>cancel</button><br />
           </>
-          : <button onClick={() => setIsToAddTodo(true)}>add comment</button>
+          : <button onClick={() => setIsToAddTodo(true)}>add todo</button>
           }
       </div>
     </div>

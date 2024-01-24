@@ -15,7 +15,7 @@ const Comments = () => {
     const [name, setName] = useState('');
     const [toSearchId, setToSearchId] = useState('');
     const [toSearchName, setToSearchName] = useState('');
-    const [searchTodosdBy, setSearchTodosBy] = useState('');  
+    const [searchCommentsdBy, setSearchCommentsBy] = useState('');  
 
     useEffect(() => {
         fetch(`http://localhost:3000/comments?postId=${post.id}`)
@@ -57,11 +57,14 @@ const Comments = () => {
         if (property === '' || property === undefined) {
           fetch(`http://localhost:3000/comments?postId=${post.id}`)
               .then(response => response.json())
-              .then(json => setComments(json));
+              .then(json => setComments(json))
+              .then(setSearchCommentsBy('finished'));
+
         } else {
           fetch(`http://localhost:3000/comments?${propertytype}=${property}`)
               .then(response => response.json())
-              .then(json => setComments(json));
+              .then(json => setComments(json))
+              .then(setSearchCommentsBy('finished'));
         }
       };
 
@@ -109,6 +112,16 @@ const Comments = () => {
         setUpdateComment('');
     };
 
+    const cancelSearch = () => {
+        setSearchCommentsBy('');
+        setToSearchId('');
+        setToSearchId('');
+        setSearchCommentsBy('');
+        fetch(`http://localhost:3000/comments?postId=${post.id}`)
+          .then(response => response.json())
+          .then(json => setComments(json));
+      };
+
     const getAndSetNextPostId = () => {
         fetch("http://localhost:3000/nextID", {
             method: 'GET'
@@ -141,7 +154,7 @@ const Comments = () => {
             <h2 className="heading">comments</h2>
             <div className="section search-section">
             <h3>Search Comments</h3>
-                {searchTodosdBy ==='id' ?
+                {searchCommentsdBy ==='id' ?
                 <>
                 <input
                     type="number"
@@ -149,10 +162,10 @@ const Comments = () => {
                     value={toSearchId}
                     onChange={(e) => setToSearchId(e.target.value)}
                 />
-                <button onClick={() => searchComments(searchTodosdBy, toSearchId)}>search</button>
+                <button onClick={() => searchComments(searchCommentsdBy, toSearchId)}>search</button>
                 <button onClick={() => { cancel(); }}>cancel</button><br />
                 </>
-                :searchTodosdBy === 'name'?
+                :searchCommentsdBy === 'name'?
                     <>
                     <input
                         type="text"
@@ -160,12 +173,17 @@ const Comments = () => {
                         value={toSearchName}
                         onChange={(e) => setToSearchName(e.target.value)}
                     />
-                    <button onClick={() => searchComments(searchTodosdBy, toSearchName)}>search</button>
+                    <button onClick={() => searchComments(searchCommentsdBy, toSearchName)}>search</button>
                     <button onClick={() => { cancel(); }}>cancel</button><br />
                     </>
+                    :searchCommentsdBy === 'finished' ?
+                    <>
+                      <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
+    
+                    </>
                     :<>
-                    <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
-                    <button onClick={()=>setSearchTodosBy('name')}>search by name:</button>
+                    <button onClick={()=>setSearchCommentsBy('id')}>search by id:</button>
+                    <button onClick={()=>setSearchCommentsBy('name')}>search by name:</button>
                     </>
                 }
             </div>

@@ -71,13 +71,15 @@ const Todos = () => {
     if (property === '' || property === undefined) {
       fetch(`http://localhost:3000/todos?userId=${user.id}`)
           .then(response => response.json())
-          .then(json => setTodos(json));
+          .then(json => setTodos(json))
+          .then(setSearchTodosBy('finished'));
+
     } else {
       fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
           .then(response => response.json())
-          .then(json => setTodos(json));
+          .then(json => setTodos(json))
+          .then(setSearchTodosBy('finished'));
     }
-    console.log("ttt", todos); 
   };
 
   const deleteTodo = (todoId) => {
@@ -129,7 +131,7 @@ const Todos = () => {
     .catch(error => console.error('Error:', error));
 
     setTodos(prevTodos => prevTodos.map((prevTodo) => {
-       return prevTodo.id === todo.id ? updatedTodo : prevTodo
+       return prevTodo.id === todo.id ? updatedTodo : prevTodo;
     }));
     setToUpdateTodoId('');
     setTitle('');
@@ -142,6 +144,17 @@ const Todos = () => {
     setSearchTodosBy('');
     setToSearchId('');
     setTitle('');
+  };
+
+  const cancelSearch = () => {
+    setSearchTodosBy('');
+    setToSearchId('');
+    setTitle('');
+    setToSearchId('');
+    setSearchTodosBy('');
+    fetch(`http://localhost:3000/todos?userId=${user.id}`)
+      .then(response => response.json())
+      .then(json => setTodos(json));
   };
 
   const getAndSetNextTodoId = () => {
@@ -258,11 +271,17 @@ const Todos = () => {
                 <button onClick={() => searchTodos(searchTodosdBy, toSearchState == 'true')}>search</button>
                 <button onClick={() => { cancel(); }}>cancel</button><br />
                 </>
+                :searchTodosdBy === 'finished' ?
+                <>
+                  <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
+
+                </>
                 :<>
                 <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
                 <button onClick={()=>setSearchTodosBy('title')}>search by title:</button>
                 <button onClick={()=>setSearchTodosBy('completed')}>search by state:</button>
                 </>
+                
             }
           </div>
 

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import '../styles/Global.css';
+import '../styles/AlbumsAndPhotos.css';
 
 const Photos = () => {
 
@@ -13,6 +15,7 @@ const Photos = () => {
     const [title, setTitle] = useState('');
     const [isToAddPhoto, setIsToAddPhoto] = useState('');
     const [photoToUpdateId, setPhotoToUpdateId] = useState('');
+    const [isToUpdate, setIsToUpdate] = useState(false);
 
     useEffect(() => {
         fetch(`http://localhost:3000/photos?albumId=${album.id}&_limit=10`)
@@ -48,7 +51,7 @@ const Photos = () => {
             setUrl(photoToUpdateObj.url);
         if (thumbnailUrl == '')
             setThumbnailUrl(photoToUpdateObj.thumbnailUrl);
-        fetch(`http://localhost:3000/photos/${photoToUpdateId}`, {
+        fetch(`http://localhost:3000/photos/${photoToUpdateObj.id}`, {
             method: "PATCH",
             body: JSON.stringify({
                 "thumbnailUrl": thumbnailUrl,
@@ -60,7 +63,12 @@ const Photos = () => {
         })
             .then((response) => response.json())
             .then((json) => console.log(json));
-        const updatedPhoto = {albumId: photoToUpdateObj.albumId, id: photoToUpdateObj.id, title: photoToUpdateObj.title, thumbnailUrl: thumbnailUrl, url: url};
+        const updatedPhoto = {
+            albumId: photoToUpdateObj.albumId, 
+            id: photoToUpdateObj.id, 
+            title: photoToUpdateObj.title, 
+            thumbnailUrl: thumbnailUrl, 
+            url: url};
         setPhotos((prevPhotos) =>
             prevPhotos.map((photo) => photo.id === photoToUpdateId ? updatedPhoto : photo));
         setPhotoToUpdateId('');
@@ -114,32 +122,48 @@ const Photos = () => {
 
     return (
         <>
+            <div className="container">
             <h3>album id: {album.id}, album title: {album.title}</h3>
-            <h1>Photos</h1>
+            <h1 className="heading">Photos</h1>
+            <div className="photo-container">
             {photos.map((photo, i) => (
-                <span key={i}>
-                    <img src={`${photo.thumbnailUrl}`} width="150" height="150" />
-                    <button onClick={() => deletePhoto(photo.id)}>delete photo</button>
-                    {photoToUpdateId == photo.id ?
-                        <>
-                            <input
-                                type="text"
-                                placeholder="thumbnailUrl"
-                                value={thumbnailUrl}
-                                onChange={(e) => setThumbnailUrl(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                placeholder="url"
-                                value={url}
-                                onChange={(e) => setUrl(e.target.value)}
-                            />
-                            <button onClick={() => updatePhoto(photo)}>update</button>
-                            <button onClick={() => setPhotoToUpdateId('')}>cancel</button>
-                        </>
-                        : <button onClick={() => setPhotoToUpdateId(photo.id)}>update photo</button>}
-                </span>
+                <div key={i} className="photo">
+                    <img src={`${photo.thumbnailUrl}`}/>
+                    <div className="button-container">
+                        <button onClick={() => deletePhoto(photo.id)}>delete</button>
+                        
+                        {isToUpdate ?
+                            <>
+                            { photoToUpdateId === photo.id &&(
+                                <>
+                                <input
+                                    type="text"
+                                    placeholder="thumbnailUrl"
+                                    value={thumbnailUrl}
+                                    onChange={(e) => setThumbnailUrl(e.target.value)}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="url"
+                                    value={url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                />
+                                <button onClick={() => updatePhoto()}>send</button>
+                                
+                                </>
+                           
+                            )}
+                            </>
+                            :<button onClick={() => {setIsToUpdate(true);
+                                setPhotoToUpdateId(photo.id);}}>update</button>
+                            
+                        }
+                        <button onClick={() => setPhotoToUpdateId('')}>cancel</button>
+                    </div>
+                </div>
             ))}
+
+            </div>
             <br />
             <button onClick={displayMorePhotos}>more photos</button>
             {isToAddPhoto ? <>
@@ -166,6 +190,8 @@ const Photos = () => {
             </>
                 : <button onClick={() => setIsToAddPhoto(true)}>add photo</button>
             }
+        </div>
+
         </>
     );
 };

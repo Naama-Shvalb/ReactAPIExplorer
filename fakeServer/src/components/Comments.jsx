@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { UserContext } from '../contexts/UserProvider';
-
+import '../styles/Global.css';
 
 const Comments = () => {
     const location = useLocation();
@@ -137,82 +137,84 @@ const Comments = () => {
 
     return (
         <>
-        <h4>comments</h4>
-        <div>
-        <h2>Search Comments</h2>
-        {searchTodosdBy ==='id' ?
-          <>
-          <input
-              type="number"
-              placeholder="id"
-              value={toSearchId}
-              onChange={(e) => setToSearchId(e.target.value)}
-          />
-          <button onClick={() => searchComments(searchTodosdBy, toSearchId)}>search</button>
-          <button onClick={() => { cancel(); }}>cancel</button><br />
-          </>
-          :searchTodosdBy === 'name'?
-            <>
-            <input
-                type="text"
-                placeholder="name"
-                value={toSearchName}
-                onChange={(e) => setToSearchName(e.target.value)}
-            />
-            <button onClick={() => searchComments(searchTodosdBy, toSearchName)}>search</button>
-            <button onClick={() => { cancel(); }}>cancel</button><br />
-            </>
-            :<>
-            <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
-            <button onClick={()=>setSearchTodosBy('name')}>search by name:</button>
-            </>
-        }
-      </div>
-
-            {(comments != '') &&
+        <div className="container">
+            <h2 className="heading">comments</h2>
+            <div className="section search-section">
+            <h3>Search Comments</h3>
+                {searchTodosdBy ==='id' ?
                 <>
-                    {comments.map((comment, i) => {
-                        return (<div key={i}>
-                            <p key={i}>id: {comment.id}, name: {comment.name}, email: {comment.email}
-                                <br />body: {comment.body}</p>
-                            {comment.email == user.email && <>
-                                <button onClick={() => deleteComment(comment.id)}>delete comment</button>
-                                {updateComment[i] ? <>
-                                    <input
-                                        type="text"
-                                        placeholder="body"
-                                        value={body}
-                                        onChange={(e) => setBody(e.target.value)}
-                                    />
-                                    <button onClick={() => { updateCommentFunc(comment); }}>update</button>
-                                    <button onClick={() => { cancel(); }}>cancel</button>
-                                </>
-                                    : <button onClick={() => setUpdateComment(comment.id)}>update comment</button>
-                                }
-                            </>}
-                        </div>);
-                    })}
+                <input
+                    type="number"
+                    placeholder="id"
+                    value={toSearchId}
+                    onChange={(e) => setToSearchId(e.target.value)}
+                />
+                <button onClick={() => searchComments(searchTodosdBy, toSearchId)}>search</button>
+                <button onClick={() => { cancel(); }}>cancel</button><br />
                 </>
-            }
-            {isToAddComment ?
-                <>
+                :searchTodosdBy === 'name'?
+                    <>
                     <input
                         type="text"
                         placeholder="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={toSearchName}
+                        onChange={(e) => setToSearchName(e.target.value)}
                     />
-                    <input
-                        type="text"
-                        placeholder="body"
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                    />
-                    <button onClick={() => addNewComment(post.id)}>add</button>
+                    <button onClick={() => searchComments(searchTodosdBy, toSearchName)}>search</button>
                     <button onClick={() => { cancel(); }}>cancel</button><br />
-                </>
-                : <button onClick={() => setIsToAddComment(true)}>add comment</button>
-            }
+                    </>
+                    :<>
+                    <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
+                    <button onClick={()=>setSearchTodosBy('name')}>search by name:</button>
+                    </>
+                }
+            </div>
+
+                {(comments != '') &&
+                    <>
+                        {comments.map((comment, i) => {
+                            return (<div key={i}>
+                                <p key={i}>id: {comment.id}, name: {comment.name}, email: {comment.email}
+                                    <br />body: {comment.body}</p>
+                                {comment.email == user.email && <>
+                                    <button onClick={() => deleteComment(comment.id)}>delete comment</button>
+                                    {updateComment[i] ? <>
+                                        <input
+                                            type="text"
+                                            placeholder="body"
+                                            value={body}
+                                            onChange={(e) => setBody(e.target.value)}
+                                        />
+                                        <button onClick={() => { updateCommentFunc(comment); }}>update</button>
+                                        <button onClick={() => { cancel(); }}>cancel</button>
+                                    </>
+                                        : <button onClick={() => setUpdateComment(comment.id)}>update comment</button>
+                                    }
+                                </>}
+                            </div>);
+                        })}
+                    </>
+                }
+                {isToAddComment ?
+                    <>
+                        <input
+                            type="text"
+                            placeholder="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <input
+                            type="text"
+                            placeholder="body"
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                        />
+                        <button onClick={() => addNewComment(post.id)}>add</button>
+                        <button onClick={() => { cancel(); }}>cancel</button><br />
+                    </>
+                    : <button onClick={() => setIsToAddComment(true)}>add comment</button>
+                }
+            </div>
         </>
     );
 };

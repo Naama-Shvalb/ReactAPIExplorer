@@ -1,0 +1,28 @@
+.info-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-top: 20px;
+  }
+  
+  .info-heading {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .info-content {
+    line-height: 1.6;
+  }
+  
+  .info-content span {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .info-content strong {
+    font-weight: bold;
+  }
+  

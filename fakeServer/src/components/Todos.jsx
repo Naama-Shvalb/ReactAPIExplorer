@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../contexts/UserProvider';
+import '../styles/Global.css';
 
 const Todos = () => {
   const { userId } = useParams();
@@ -219,106 +220,114 @@ const Todos = () => {
   
     return(
         <>
-        <h1>Todos</h1>
+        <div className="container">
+        <h1 className="heading">Todos</h1>
         <div>
-            <div>
-              <h2>Search Todos</h2>
-              {searchTodosdBy ==='id' ?
+          <div className="section search-section">
+            <h2>Search Todos</h2>
+            {searchTodosdBy ==='id' ?
+              <>
+              <input
+                  type="number"
+                  placeholder="id"
+                  value={toSearchId}
+                  onChange={(e) => setToSearchId(e.target.value)}
+              />
+              <button onClick={() => searchTodos(searchTodosdBy, toSearchId)}>search</button>
+              <button onClick={() => { cancel(); }}>cancel</button><br />
+              </>
+              :searchTodosdBy === 'title'?
                 <>
                 <input
-                    type="number"
-                    placeholder="id"
-                    value={toSearchId}
-                    onChange={(e) => setToSearchId(e.target.value)}
+                    type="text"
+                    placeholder="title"
+                    value={toSearchTitle}
+                    onChange={(e) => setToSearchTitle(e.target.value)}
                 />
-                <button onClick={() => searchTodos(searchTodosdBy, toSearchId)}>search</button>
+                <button onClick={() => searchTodos(searchTodosdBy, toSearchTitle)}>search</button>
                 <button onClick={() => { cancel(); }}>cancel</button><br />
                 </>
-                :searchTodosdBy === 'title'?
-                  <>
-                  <input
-                      type="text"
-                      placeholder="title"
-                      value={toSearchTitle}
-                      onChange={(e) => setToSearchTitle(e.target.value)}
-                  />
-                  <button onClick={() => searchTodos(searchTodosdBy, toSearchTitle)}>search</button>
-                  <button onClick={() => { cancel(); }}>cancel</button><br />
-                  </>
-                  :searchTodosdBy === 'completed'?
-                  <>
-                  <input
-                      type="text"
-                      placeholder="is complited?"
-                      value={toSearchState}
-                      onChange={(e) => setToSearchState(e.target.value)}
-                  />
-                  <button onClick={() => searchTodos(searchTodosdBy, toSearchState == 'true')}>search</button>
-                  <button onClick={() => { cancel(); }}>cancel</button><br />
-                  </>
-                  :<>
-                  <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
-                  <button onClick={()=>setSearchTodosBy('title')}>search by title:</button>
-                  <button onClick={()=>setSearchTodosBy('completed')}>search by state:</button>
-                  </>
-              }
-            </div>
+                :searchTodosdBy === 'completed'?
+                <>
+                <input
+                    type="text"
+                    placeholder="is complited?"
+                    value={toSearchState}
+                    onChange={(e) => setToSearchState(e.target.value)}
+                />
+                <button onClick={() => searchTodos(searchTodosdBy, toSearchState == 'true')}>search</button>
+                <button onClick={() => { cancel(); }}>cancel</button><br />
+                </>
+                :<>
+                <button onClick={()=>setSearchTodosBy('id')}>search by id:</button>
+                <button onClick={()=>setSearchTodosBy('title')}>search by title:</button>
+                <button onClick={()=>setSearchTodosBy('completed')}>search by state:</button>
+                </>
+            }
+          </div>
 
-            <div>
-                <h2>Select todos for user {userId}:</h2>
-                <button onClick={()=>handleSelectTodos('serially')} >Show serially</button>
-                <button onClick={()=>handleSelectTodos('alphabetical')}>View in alphabetical order</button>
-                <button onClick={()=>handleSelectTodos('completion')}>View by task completion</button>
-                <button onClick={()=>handleSelectTodos('random')}>Show in random order</button>
-            </div>
-            {todos.map((todo, index) => (
-                <div key={todo.id}>
-                    <p>{todo.id}.  {todo.title}
-                     <input 
-                      type="checkbox" 
-                      defaultChecked={todo.completed}
-                      value={completed} onChange={()=>{handleCheckboxChange(event, todo);}}
-                      />
-                    </p>
-                    {/*comment.email == currentUser.email &&*/ <>
-                        <button onClick={() => deleteTodo(todo.id)}>delete todo</button>
-                        {toUpdateTodoId===index ? 
-                        <>
-                            <input
-                                type="text"
-                                placeholder="title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                            />
-                            <button onClick={() => { updateTodo(todo); }}>update</button>
-                            <button onClick={() => { cancel(); }}>cancel</button>
-                        </>
-                            : <button onClick={() => handleUpdateTodo(todo)}>update todo</button>
-                        }
-                    </>}
+          <div className="actions item-actions">
+              <h2>Select todos for user {userId}:</h2>
+              <button onClick={()=>handleSelectTodos('serially')} >Show serially</button>
+              <button onClick={()=>handleSelectTodos('alphabetical')}>View in alphabetical order</button>
+              <button onClick={()=>handleSelectTodos('completion')}>View by task completion</button>
+              <button onClick={()=>handleSelectTodos('random')}>Show in random order</button>
+          </div>
+          {todos.map((todo, index) => (
+              <div key={todo.id} className="item">
+                <div className="item-content">
+                  <p>{todo.id}.  {todo.title}
+                    <input 
+                    type="checkbox" 
+                    defaultChecked={todo.completed}
+                    value={completed} onChange={()=>{handleCheckboxChange(event, todo);}}
+                    />
+                  </p>
                 </div>
-            ))}
-            {isToAddTodo ?
-            <>
-            <input
+                  { <>
+                    <div className="actions item-actions">
+                      <button onClick={() => deleteTodo(todo.id)}>delete todo</button>
+                      {toUpdateTodoId === index ? 
+                      <>
+                          <input
+                              type="text"
+                              placeholder="title"
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                          />
+                          <button onClick={() => { updateTodo(todo); }}>update</button>
+                          <button onClick={() => { cancel(); }}>cancel</button>
+                      </>
+                          : <button onClick={() => handleUpdateTodo(todo)}>update todo</button>
+                      }
+                    </div>
+                  </>}
+              </div>
+          ))}
+          <div className="section add-section">
+          {isToAddTodo ?
+          <>
+          <input
+            type="text"
+            placeholder="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <input
               type="text"
-              placeholder="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="is complited?"
-                value={completed}
-                onChange={(e) => setCompleted(e.target.value)}
-            />
-            <button onClick={() => addNewTodo()}>add</button>
-            <button onClick={() => { cancel(); }}>cancel</button><br />
+              placeholder="is complited?"
+              value={completed}
+              onChange={(e) => setCompleted(e.target.value)}
+          />
+          <button onClick={() => addNewTodo()}>add</button>
+          <button onClick={() => { cancel(); }}>cancel</button><br />
           </>
           : <button onClick={() => setIsToAddTodo(true)}>add comment</button>
-        }
+          }
       </div>
-    </>
+    </div>
+    </div>
+  </>
 
   );
 };

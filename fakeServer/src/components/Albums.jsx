@@ -1,6 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import { UserContext } from '../contexts/UserProvider';
+import '../styles/Global.css';
+import '../styles/AlbumsAndPhotos.css';
 
 const Albums = () => {
 
@@ -88,8 +90,9 @@ const Albums = () => {
 
     return (
         <>
-            <h1>Albums</h1>
-            <div>
+          <div className="container">
+            <h1 className="heading">Albums</h1>
+            <div className="section search-section">
                 <h2>Search Albums</h2>
                 {searchAlbumsdBy ==='id' ?
                 <>
@@ -121,8 +124,8 @@ const Albums = () => {
             </div>
             <label></label>
             {albums.map((album, index) => (
-                <div key={index}>
-                    <Link to={`${album.id}/photos`} state={{ album: album }}>id: {album.id}, title: {album.title}</Link>
+                <div key={index} className="item album-info">
+                    <Link to={`${album.id}/photos`} className="album-link" state={{ album: album }}>id: {album.id}, title: {album.title}</Link>
                 </div>
             ))}
             {isToAddAlbum ?
@@ -136,7 +139,9 @@ const Albums = () => {
                     <button onClick={addAlbum}>add</button>
                     <button onClick={cancel}>cancel</button>
                 </>
-                : <button onClick={() => setIsToAddAlbum(true)}>add album</button>}
+                : <button onClick={() => setIsToAddAlbum(true)}>add album</button>
+                }
+                </div>
         </>
     );
 };

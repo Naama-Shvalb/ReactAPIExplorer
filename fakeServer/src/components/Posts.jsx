@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserProvider';
-
+import '../styles/Global.css';
 import './posts.css';
 
 const Posts = () => {
@@ -155,8 +155,9 @@ const Posts = () => {
   }
   return (
     <>
-      <h1>Posts</h1>
-      <div>
+    <div className="container">
+      <h1 className="heading">Posts</h1>
+      <div className="section search-section">
         <h2>Search Posts</h2>
         {searchPostsdBy ==='id' ?
           <>
@@ -193,25 +194,30 @@ const Posts = () => {
       </div>
       {posts.map((post, index) => (
         <div className={`${displayDetails[post.id]}`} key={index}>
-          <p>id: {post.id} title: {post.title}</p>
-          {displayDetails[index] ?
-            <>
-              <p>body: {post.body}</p>
-              {isToUpdatePost ?
-                <>
-                  <br />
-                  <input
-                    type="text"
-                    placeholder="body"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                  />
-                  <button onClick={() => updatePost(post)}>update</button>
-                  <button onClick={() => cancel()}>cancel</button><br />
-                </>
-                : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
-              }
-              <button onClick={() => deletePost(post.id)}>delete post</button>
+          <div className="item-content">
+            <p>id: {post.id} title: {post.title}</p>
+          </div>
+            {displayDetails[index] ?
+              <>
+                <p className="item-content">body: {post.body}</p>
+            
+              <div className="actions item-actions">
+                {isToUpdatePost ?
+                  <>
+                    <br />
+                    <input
+                      type="text"
+                      placeholder="body"
+                      value={body}
+                      onChange={(e) => setBody(e.target.value)}
+                    />
+                    <button onClick={() => updatePost(post)}>update</button>
+                    <button onClick={() => cancel()}>cancel</button><br />
+                  </>
+                  : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
+                }
+                <button onClick={() => deletePost(post.id)}>delete post</button>
+              </div>
               {!displayComments ?
                 <button onClick={() => SetDisplayComments(true)} >show all comments</button>
                 // <button onClick={() => {SetDisplayComments(true); return(<Navigate to={"comments"} state={{ currentPost: currentPost, currentUser: currentUser }} />);}}>
@@ -226,28 +232,32 @@ const Posts = () => {
               }
 
             </>
-            : <button onClick={() => getMoreDetails(post)}>open post</button>}
+            : <button onClick={() => getMoreDetails(post)}>open post</button>   
+            }
+            
         </div>
       ))}
-      {isToAddPost ? <>
-        <input
-          type="text"
-          placeholder="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="body"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-        />
-        <button onClick={addNewPost}>add</button>
-        <button onClick={() => { cancel(); }}>cancel</button>
-      </>
-        : <button onClick={() => setIsToAddPost(true)}>add post</button>
-      }
-
+      <div className="section add-section">
+        {isToAddPost ? <>
+          <input
+            type="text"
+            placeholder="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="body"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+          />
+          <button onClick={addNewPost}>add</button>
+          <button onClick={() => { cancel(); }}>cancel</button>
+        </>
+          : <button onClick={() => setIsToAddPost(true)}>add post</button>
+        }
+      </div>
+    </div>
     </>
   );
 };

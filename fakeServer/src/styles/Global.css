@@ -1,0 +1,122 @@
+/* Global styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+.container {
+  max-width: 1000px;
+  min-width: 700px;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.heading {
+  font-size: 36px;
+  color: #007BFF;
+  margin-bottom: 20px;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.input {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.button {
+  padding: 10px 15px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.button:hover {
+  background: linear-gradient(to right, #0056b3, #007BFF);
+}
+
+
+.checkbox {
+  margin-right: 10px;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.actions button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.add-section {
+  background-color: #28a745;
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.search-section {
+  background-color: #007BFF;
+  padding: 15px 15px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.search-section > button {
+  margin-right: 10px;
+
+}
+
+.actions> button{
+  margin-right: 10px;
+
+}
+
+.item {
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: transform 0.3s;
+}
+
+.item:hover {
+  transform: translateY(-5px);
+}
+
+.item-content {
+  /* Styles for the content of each item */
+}
+
+.item-actions {
+  /* Styles for the actions associated with each item */
+}
+
+.home-buttons {
+  border: solid #28a745;
+  border-radius: 15px;
+}
+
+.home-buttons > button {
+  border:solid #52a1f5;
+  margin-top: 20px;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  width: 80px;
+
+}
+

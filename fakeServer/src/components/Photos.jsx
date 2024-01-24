@@ -15,7 +15,7 @@ const Photos = () => {
     const [title, setTitle] = useState('');
     const [isToAddPhoto, setIsToAddPhoto] = useState('');
     const [photoToUpdateId, setPhotoToUpdateId] = useState('');
-    const [isToUpdate, setIsToUpdate] = useState(false);
+    const [isMorePhotos, setIsMorePhotos]=useState(true);
 
     useEffect(() => {
         fetch(`http://localhost:3000/photos?albumId=${album.id}&_limit=10`)
@@ -44,6 +44,8 @@ const Photos = () => {
             .then(response => response.json());
 
         setPhotos(prevPhotos => prevPhotos.filter(photo => { return photo.id !== photoIdToDelete; }));
+        if(photo.length==0)
+            displayMorePhotos();
     };
 
     const updatePhoto = (photoToUpdateObj) => {
@@ -64,13 +66,14 @@ const Photos = () => {
             .then((response) => response.json())
             .then((json) => console.log(json));
         const updatedPhoto = {
-            albumId: photoToUpdateObj.albumId, 
-            id: photoToUpdateObj.id, 
-            title: photoToUpdateObj.title, 
-            thumbnailUrl: thumbnailUrl, 
-            url: url};
+            albumId: photoToUpdateObj.albumId,
+            id: photoToUpdateObj.id,
+            title: photoToUpdateObj.title,
+            thumbnailUrl: thumbnailUrl,
+            url: url
+        };
         setPhotos((prevPhotos) =>
-            prevPhotos.map((photo) => {return photo.id === photoToUpdateId ? updatedPhoto : photo}));
+            prevPhotos.map((photo) => { return photo.id === photoToUpdateId ? updatedPhoto : photo }));
         setPhotoToUpdateId('');
     };
 
@@ -113,76 +116,80 @@ const Photos = () => {
             .then((json) => console.log(json));
     };
 
-    const displayMorePhotos = () =>{
+    const displayMorePhotos = () => {
         const photoArrayList = photos.length;
-        fetch(`http://localhost:3000/photos?albumId=${album.id}&_start=${photoArrayList}&_end=${photoArrayList+10}`)
-        .then(response => response.json())
-        .then(json => setPhotos(prevPhotos => [...prevPhotos].concat(json)));
+        fetch(`http://localhost:3000/photos?albumId=${album.id}&_start=${photoArrayList}&_end=${photoArrayList + 10}`)
+            .then(response => response.json())
+            .then(json =>{json.length==0? setIsMorePhotos(false) :setPhotos(prevPhotos => [...prevPhotos].concat(json))})
     };
 
     return (
         <>
             <div className="container">
-            <h3>album id: {album.id}, album title: {album.title}</h3>
-            <h1 className="heading">Photos</h1>
-            <div className="photo-container">
-            {photos.map((photo, i) => (
-                <div key={i} className="photo">
-                    <img src={`${photo.thumbnailUrl}`}/>
-                    <div className="button-container">
-                        <button onClick={() => deletePhoto(photo.id)}>delete</button>
-                     
-                            { photoToUpdateId === photo.id?(
-                                <>
-                                <input
-                                    type="text"
-                                    placeholder="thumbnailUrl"
-                                    value={thumbnailUrl}
-                                    onChange={(e) => setThumbnailUrl(e.target.value)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="url"
-                                    value={url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                />
-                                <button onClick={() => updatePhoto(photo)}>send</button>
-                                </>
-                            )
-                            :<button onClick={() => {setPhotoToUpdateId(photo.id);}}>update</button>}
-                        <button onClick={() => setPhotoToUpdateId('')}>cancel</button>
-                    </div>
-                </div>
-            ))}
+                <h3>album id: {album.id}, album title: {album.title}</h3>
+                <h1 className="heading">Photos</h1>
+                <div className="photo-container">
+                    {photos.map((photo, i) => (
+                        <div key={i} className="photo">
+                            <img src={`${photo.thumbnailUrl}`} />
+                            <div className="button-container">
+                                {photoToUpdateId === photo.id ? (
+                                    <><div className="updateInput">
+                                        <input
+                                            type="text"
+                                            placeholder="thumbnailUrl"
+                                            value={thumbnailUrl}
+                                            onChange={(e) => setThumbnailUrl(e.target.value)}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="url"
+                                            value={url}
+                                            onChange={(e) => setUrl(e.target.value)}
+                                        /></div>
+                                        <div className="updateButton">
+                                            <button onClick={() => updatePhoto(photo)}>send</button>
+                                            <button onClick={() => setPhotoToUpdateId('')}>cancel</button>
+                                        </div>
+                                    </>
+                                )
+                                    : <>
+                                        <button onClick={() => { setPhotoToUpdateId(photo.id); }}>update</button>
+                                        <button onClick={() => deletePhoto(photo.id)}>delete</button>
+                                    </>
+                                }
+                            </div>
+                        </div>
+                    ))}
 
+                </div>
+                <br />
+                {isMorePhotos&&<button onClick={displayMorePhotos}>more photos</button>}
+                {isToAddPhoto ? <>
+                    <input
+                        type="text"
+                        placeholder="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="url"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="thumbnailUrl"
+                        value={thumbnailUrl}
+                        onChange={(e) => setThumbnailUrl(e.target.value)}
+                    />
+                    <button onClick={addPhoto}>add</button>
+                    <button onClick={() => setIsToAddPhoto(false)}>cancel</button>
+                </>
+                    : <button onClick={() => setIsToAddPhoto(true)}>add photo</button>
+                }
             </div>
-            <br />
-            <button onClick={displayMorePhotos}>more photos</button>
-            {isToAddPhoto ? <>
-                <input
-                    type="text"
-                    placeholder="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="url"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="thumbnailUrl"
-                    value={thumbnailUrl}
-                    onChange={(e) => setThumbnailUrl(e.target.value)}
-                />
-                <button onClick={addPhoto}>add</button>
-                <button onClick={() => setIsToAddPhoto(false)}>cancel</button>
-            </>
-                : <button onClick={() => setIsToAddPhoto(true)}>add photo</button>
-            }
-        </div>
 
         </>
     );

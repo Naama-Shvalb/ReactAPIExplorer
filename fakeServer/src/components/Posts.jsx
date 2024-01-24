@@ -5,7 +5,6 @@ import '../styles/Global.css';
 import './posts.css';
 
 const Posts = () => {
-
   const [posts, setPosts] = useState([]);
   const [postId, setPostId] = useState('');
   const [currentPost, setCurrentPost] = useState('');
@@ -18,6 +17,7 @@ const Posts = () => {
   const [toSearchId, setToSearchId] = useState('');
   const [toSearchTitle, setToSearchTitle] = useState('');
   const [searchPostsdBy, setSearchPostsBy] = useState('');
+  const [displayClass, setDisplayclass] = useState([]);
 
   const { user } = useContext(UserContext);
 
@@ -39,6 +39,9 @@ const Posts = () => {
   const getMoreDetails = (displayedPost) => {
     setCurrentPost(displayedPost);
     SetDisplayComments(false);
+    let copyDisplayclass=[];
+    posts.map((post,i)=>{copyDisplayclass[i] = post.id==displayedPost.id?"display":"false"})
+    setDisplayclass(copyDisplayclass);
     setDisplayDetails(displayedPost.id);
   };
 
@@ -165,10 +168,6 @@ const Posts = () => {
       .then(json => setPosts(json));
   };
 
-
-  if (posts == undefined) {
-    return <></>;
-  }
   return (
     <>
       <div className="container">
@@ -200,7 +199,6 @@ const Posts = () => {
               : searchPostsdBy === 'finished' ?
                 <>
                   <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
-
                 </>
                 : <>
                   <button onClick={() => setSearchPostsBy('id')}>search by id:</button>
@@ -209,14 +207,13 @@ const Posts = () => {
           }
         </div>
         {posts.map((post, index) => (
-          <div className={`${displayDetails[post.id]}`} key={index}>
+          <div className={`${displayClass[index]}`} key={index}>
             <div className="item-content">
               <p><strong>id:</strong> {post.id} <strong>title:</strong> {post.title}</p>
             </div>
             {displayDetails == post.id ?
               <>
                 <p className="item-content">body: {post.body}</p>
-
                 <div className="actions item-actions">
                   {isToUpdatePost ?
                     <>
@@ -246,13 +243,10 @@ const Posts = () => {
                   <><Navigate to={`${post.id}/comments`} state={{ post: post }} />
                     <Outlet />
                   </>
-
                 }
-
               </>
               : <button onClick={() => getMoreDetails(post)}>open post</button>
             }
-
           </div>
         ))}
         <div className="section add-section">

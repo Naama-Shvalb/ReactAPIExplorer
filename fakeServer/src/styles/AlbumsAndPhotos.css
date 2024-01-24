@@ -32,6 +32,7 @@
   box-sizing: border-box;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
+  flex-direction:column;
 }
 
 .photo:hover .button-container {
@@ -47,4 +48,16 @@
 .button-container button:hover {
   background-color: #ff4d4d;
   color: #fff;
+}
+
+.updateButton{
+  display: inline-flex;
+}
+
+.updateInput{
+  display: inline-flex;
+}
+
+input{
+  width: 140px;
 }
